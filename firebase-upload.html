@@ -611,297 +611,305 @@
             </div>
         </div>
     </div>
-    <script>
-        // Global variables
-        let selectedFiles = [];
-        let isFirebaseReady = false;
-        let app, storage;
+<script src="https://cdn.jsdelivr.net/npm/compressorjs@1.0.7/dist/compressor.min.js"></script>
+<script>
+    // Global variables
+    let selectedFiles = [];
+    let isFirebaseReady = false;
+    let app, storage;
 
-        // Wacht tot DOM geladen is
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFirebase();
+    // Wacht tot DOM geladen is
+    document.addEventListener('DOMContentLoaded', function() {
+        loadFirebase();
+    });
+
+    async function loadFirebase() {
+        try {
+            // Laad Firebase modules
+            const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+            const { getStorage } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+
+            // Firebase Configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyDQjVGR_GkYWYM2FttcXdQP-fIiaASLIAQ",
+                authDomain: "bruiloft-fotos.firebaseapp.com",
+                projectId: "bruiloft-fotos",
+                storageBucket: "bruiloft-fotos.firebasestorage.app",
+                messagingSenderId: "340277358648",
+                appId: "1:340277358648:web:c4da4360cf91b61cf7b6cd",
+                measurementId: "G-KHT66TGJTV"
+            };
+
+            app = initializeApp(firebaseConfig);
+            storage = getStorage(app);
+            isFirebaseReady = true;
+            
+            // Hide setup warning
+            document.getElementById('setupWarning').style.display = 'none';
+            showStatus('🔥 Firebase geladen - klaar om te uploaden!', 'success');
+            
+            // Setup file handling
+            setupFileHandling();
+            
+        } catch (error) {
+            showStatus('❌ Firebase initialisatie mislukt: ' + error.message, 'error');
+        }
+    }
+
+    function setupFileHandling() {
+        const fileInput = document.getElementById('photos');
+        const uploadArea = document.getElementById('uploadArea');
+        
+        // File input change event
+        fileInput.addEventListener('change', handleFiles);
+        
+        // Drag and drop events
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
         });
 
-        async function loadFirebase() {
-            try {
-                // Laad Firebase modules
-                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
-                const { getStorage } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+        uploadArea.addEventListener('dragleave', function() {
+            uploadArea.classList.remove('dragover');
+        });
 
-                // Firebase Configuration
-                const firebaseConfig = {
-                    apiKey: "AIzaSyDQjVGR_GkYWYM2FttcXdQP-fIiaASLIAQ",
-                    authDomain: "bruiloft-fotos.firebaseapp.com",
-                    projectId: "bruiloft-fotos",
-                    storageBucket: "bruiloft-fotos.firebasestorage.app",
-                    messagingSenderId: "340277358648",
-                    appId: "1:340277358648:web:c4da4360cf91b61cf7b6cd",
-                    measurementId: "G-KHT66TGJTV"
-                };
-
-                app = initializeApp(firebaseConfig);
-                storage = getStorage(app);
-                isFirebaseReady = true;
-                
-                // Hide setup warning
-                document.getElementById('setupWarning').style.display = 'none';
-                showStatus('🔥 Firebase geladen - klaar om te uploaden!', 'success');
-                
-                // Setup file handling
-                setupFileHandling();
-                
-            } catch (error) {
-                showStatus('❌ Firebase initialisatie mislukt: ' + error.message, 'error');
-            }
-        }
-
-        function setupFileHandling() {
-            const fileInput = document.getElementById('photos');
-            const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
             
-            // File input change event
-            fileInput.addEventListener('change', handleFiles);
-            
-            // Drag and drop events
-            uploadArea.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-
-            uploadArea.addEventListener('dragleave', function() {
-                uploadArea.classList.remove('dragover');
-            });
-
-            uploadArea.addEventListener('drop', function(e) {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                
-                const files = Array.from(e.dataTransfer.files).filter(file => 
-                    file.type.startsWith('image/') || file.type === 'image/heic'
-                );
-                
-                addFiles(files);
-            });
-
-            // Click to select files
-            uploadArea.addEventListener('click', function(e) {
-                if (!e.target.classList.contains('file-input-label') && e.target !== fileInput) {
-                    fileInput.click();
-                }
-            });
-
-            // Upload button
-            document.getElementById('uploadBtn').addEventListener('click', startUpload);
-        }
-
-        function handleFiles(e) {
-            const files = Array.from(e.target.files);
-            
-            if (files.length === 0) {
-                return;
-            }
+            const files = Array.from(e.dataTransfer.files).filter(file => 
+                file.type.startsWith('image/') || file.type === 'image/heic'
+            );
             
             addFiles(files);
-            
-            // Reset input after processing
-            setTimeout(() => {
-                e.target.value = '';
-            }, 100);
-        }
+        });
 
-        function addFiles(files) {
-            let added = 0;
-            files.forEach(file => {
-                const isDuplicate = selectedFiles.some(f => 
-                    f.file.name === file.name && f.file.size === file.size
-                );
-                
-                if (!isDuplicate) {
-                    const fileObj = {
-                        file: file,
-                        id: Date.now() + Math.random(),
-                        status: 'ready',
-                        progress: 0
-                    };
-                    selectedFiles.push(fileObj);
-                    added++;
-                }
-            });
+        // Click to select files
+        uploadArea.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('file-input-label') && e.target !== fileInput) {
+                fileInput.click();
+            }
+        });
+
+        // Upload button
+        document.getElementById('uploadBtn').addEventListener('click', startUpload);
+    }
+
+    function handleFiles(e) {
+        const files = Array.from(e.target.files);
+        
+        if (files.length === 0) {
+            return;
+        }
+        
+        addFiles(files);
+        
+        // Reset input after processing
+        setTimeout(() => {
+            e.target.value = '';
+        }, 100);
+    }
+
+    function addFiles(files) {
+        let added = 0;
+        files.forEach(file => {
+            const isDuplicate = selectedFiles.some(f => 
+                f.file.name === file.name && f.file.size === file.size
+            );
             
+            if (!isDuplicate) {
+                new Compressor(file, {
+                    quality: 0.6, // Adjust compression quality between 0 and 1
+                    success(result) {
+                        const fileObj = {
+                            file: result,
+                            id: Date.now() + Math.random(),
+                            status: 'ready',
+                            progress: 0
+                        };
+                        selectedFiles.push(fileObj);
+                        added++;
+                        updateFileList();
+                        updateUploadButton();
+                    },
+                    error(err) {
+                        console.log(err.message);
+                    },
+                });
+            }
+        });
+    }
+
+    function updateFileList() {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        
+        selectedFiles.forEach((fileObj, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <div class="file-name">📸 ${fileObj.file.name}</div>
+                    <div class="file-status ${fileObj.status}">
+                        ${getStatusText(fileObj.status, fileObj.progress)}
+                    </div>
+                    ${fileObj.status === 'uploading' ? `
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${fileObj.progress}%"></div>
+                        </div>
+                    ` : ''}
+                </div>
+                <button type="button" class="remove-file" onclick="removeFile(${index})" ${fileObj.status === 'uploading' ? 'disabled' : ''}>×</button>
+            `;
+            fileList.appendChild(fileItem);
+        });
+    }
+
+    function getStatusText(status, progress) {
+        switch (status) {
+            case 'ready': return 'Klaar om te uploaden';
+            case 'uploading': return `Uploaden... ${progress}%`;
+            case 'success': return '✅ Geüpload!';
+            case 'error': return '❌ Upload mislukt';
+            default: return '';
+        }
+    }
+
+    function removeFile(index) {
+        if (selectedFiles[index] && selectedFiles[index].status !== 'uploading') {
+            selectedFiles.splice(index, 1);
             updateFileList();
             updateUploadButton();
         }
+    }
 
-        function updateFileList() {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
+    function updateUploadButton() {
+        const readyFiles = selectedFiles.filter(f => f.status === 'ready').length;
+        const uploadBtn = document.getElementById('uploadBtn');
+        
+        uploadBtn.disabled = readyFiles === 0 || !isFirebaseReady;
+        
+        if (readyFiles === 0) {
+            uploadBtn.textContent = '🚀 Foto\'s Uploaden';
+        } else {
+            uploadBtn.textContent = `🚀 ${readyFiles} foto${readyFiles > 1 ? "'s" : ""} uploaden`;
+        }
+    }
+
+    function showStatus(message, type) {
+        const statusMessage = document.getElementById('statusMessage');
+        statusMessage.style.display = 'block';
+        statusMessage.className = `status-message status-${type}`;
+        statusMessage.textContent = message;
+        
+        if (type === 'success') {
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+    }
+
+    async function startUpload() {
+        if (!isFirebaseReady) {
+            showStatus('❌ Firebase niet geconfigureerd', 'error');
+            return;
+        }
+
+        const readyFiles = selectedFiles.filter(f => f.status === 'ready');
+        if (readyFiles.length === 0) return;
+
+        const uploaderName = document.getElementById('uploaderName').value.trim() || 'Anoniem';
+        
+        const uploadBtn = document.getElementById('uploadBtn');
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = '📤 Uploaden...';
+        
+        // Laad upload functie
+        const { ref, uploadBytesResumable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+        
+        // Upload files concurrently (max 3 at a time)
+        const maxConcurrent = 3;
+        for (let i = 0; i < readyFiles.length; i += maxConcurrent) {
+            const batch = readyFiles.slice(i, i + maxConcurrent);
+            await Promise.all(batch.map(fileObj => uploadFile(fileObj, uploaderName, ref, uploadBytesResumable)));
+        }
+        
+        updateUploadButton();
+        updateStats();
+        
+        const successCount = selectedFiles.filter(f => f.status === 'success').length;
+        const errorCount = selectedFiles.filter(f => f.status === 'error').length;
+        
+        if (errorCount === 0) {
+            showStatus(`🎉 Alle ${successCount} foto's succesvol geüpload!`, 'success');
             
-            selectedFiles.forEach((fileObj, index) => {
-                const fileItem = document.createElement('div');
-                fileItem.className = 'file-item';
-                fileItem.innerHTML = `
-                    <div class="file-info">
-                        <div class="file-name">📸 ${fileObj.file.name}</div>
-                        <div class="file-status ${fileObj.status}">
-                            ${getStatusText(fileObj.status, fileObj.progress)}
-                        </div>
-                        ${fileObj.status === 'uploading' ? `
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${fileObj.progress}%"></div>
-                            </div>
-                        ` : ''}
-                    </div>
-                    <button type="button" class="remove-file" onclick="removeFile(${index})" ${fileObj.status === 'uploading' ? 'disabled' : ''}>×</button>
-                `;
-                fileList.appendChild(fileItem);
-            });
-        }
-
-        function getStatusText(status, progress) {
-            switch (status) {
-                case 'ready': return 'Klaar om te uploaden';
-                case 'uploading': return `Uploaden... ${progress}%`;
-                case 'success': return '✅ Geüpload!';
-                case 'error': return '❌ Upload mislukt';
-                default: return '';
-            }
-        }
-
-        function removeFile(index) {
-            if (selectedFiles[index] && selectedFiles[index].status !== 'uploading') {
-                selectedFiles.splice(index, 1);
+            // Reset form after successful upload
+            setTimeout(() => {
+                selectedFiles = selectedFiles.filter(f => f.status !== 'success');
                 updateFileList();
                 updateUploadButton();
-            }
+                document.getElementById('uploaderName').value = '';
+            }, 3000);
+        } else {
+            showStatus(`⚠️ ${successCount} gelukt, ${errorCount} mislukt. Probeer mislukte opnieuw.`, 'error');
         }
+    }
 
-        function updateUploadButton() {
-            const readyFiles = selectedFiles.filter(f => f.status === 'ready').length;
-            const uploadBtn = document.getElementById('uploadBtn');
+    async function uploadFile(fileObj, uploaderName, ref, uploadBytesResumable) {
+        try {
+            fileObj.status = 'uploading';
+            fileObj.progress = 0;
+            updateFileList();
+
+            // Create storage reference
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const fileName = `${timestamp}_${uploaderName}_${fileObj.file.name}`;
+            const storageRef = ref(storage, `uploads/${fileName}`);
+
+            // Upload with progress tracking
+            const uploadTask = uploadBytesResumable(storageRef, fileObj.file);
             
-            uploadBtn.disabled = readyFiles === 0 || !isFirebaseReady;
-            
-            if (readyFiles === 0) {
-                uploadBtn.textContent = '🚀 Foto\'s Uploaden';
-            } else {
-                uploadBtn.textContent = `🚀 ${readyFiles} foto${readyFiles > 1 ? "'s" : ""} uploaden`;
-            }
+            return new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        fileObj.progress = Math.round(progress);
+                        updateFileList();
+                    },
+                    (error) => {
+                        console.error('Upload error:', error);
+                        fileObj.status = 'error';
+                        updateFileList();
+                        reject(error);
+                    },
+                    () => {
+                        fileObj.status = 'success';
+                        fileObj.progress = 100;
+                        updateFileList();
+                        console.log('Upload successful:', fileName);
+                        resolve();
+                    }
+                );
+            });
+        } catch (error) {
+            console.error('Upload setup error:', error);
+            fileObj.status = 'error';
+            updateFileList();
         }
+    }
 
-        function showStatus(message, type) {
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.style.display = 'block';
-            statusMessage.className = `status-message status-${type}`;
-            statusMessage.textContent = message;
-            
-            if (type === 'success') {
-                setTimeout(() => {
-                    statusMessage.style.display = 'none';
-                }, 5000);
-            }
-        }
+    function updateStats() {
+        const successCount = selectedFiles.filter(f => f.status === 'success').length;
+        const errorCount = selectedFiles.filter(f => f.status === 'error').length;
+        const totalCount = selectedFiles.length;
 
-        async function startUpload() {
-            if (!isFirebaseReady) {
-                showStatus('❌ Firebase niet geconfigureerd', 'error');
-                return;
-            }
-
-            const readyFiles = selectedFiles.filter(f => f.status === 'ready');
-            if (readyFiles.length === 0) return;
-
-            const uploaderName = document.getElementById('uploaderName').value.trim() || 'Anoniem';
-            
-            const uploadBtn = document.getElementById('uploadBtn');
-            uploadBtn.disabled = true;
-            uploadBtn.textContent = '📤 Uploaden...';
-            
-            // Laad upload functie
-            const { ref, uploadBytesResumable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
-            
-            // Upload files concurrently (max 3 at a time)
-            const maxConcurrent = 3;
-            for (let i = 0; i < readyFiles.length; i += maxConcurrent) {
-                const batch = readyFiles.slice(i, i + maxConcurrent);
-                await Promise.all(batch.map(fileObj => uploadFile(fileObj, uploaderName, ref, uploadBytesResumable)));
-            }
-            
-            updateUploadButton();
-            updateStats();
-            
-            const successCount = selectedFiles.filter(f => f.status === 'success').length;
-            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
-            
-            if (errorCount === 0) {
-                showStatus(`🎉 Alle ${successCount} foto's succesvol geüpload!`, 'success');
-                
-                // Reset form after successful upload
-                setTimeout(() => {
-                    selectedFiles = selectedFiles.filter(f => f.status !== 'success');
-                    updateFileList();
-                    updateUploadButton();
-                    document.getElementById('uploaderName').value = '';
-                }, 3000);
-            } else {
-                showStatus(`⚠️ ${successCount} gelukt, ${errorCount} mislukt. Probeer mislukte opnieuw.`, 'error');
-            }
-        }
-
-        async function uploadFile(fileObj, uploaderName, ref, uploadBytesResumable) {
-            try {
-                fileObj.status = 'uploading';
-                fileObj.progress = 0;
-                updateFileList();
-
-                // Create storage reference
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                const fileName = `${timestamp}_${uploaderName}_${fileObj.file.name}`;
-                const storageRef = ref(storage, `uploads/${fileName}`);
-
-                // Upload with progress tracking
-                const uploadTask = uploadBytesResumable(storageRef, fileObj.file);
-                
-                return new Promise((resolve, reject) => {
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            fileObj.progress = Math.round(progress);
-                            updateFileList();
-                        },
-                        (error) => {
-                            console.error('Upload error:', error);
-                            fileObj.status = 'error';
-                            updateFileList();
-                            reject(error);
-                        },
-                        () => {
-                            fileObj.status = 'success';
-                            fileObj.progress = 100;
-                            updateFileList();
-                            console.log('Upload successful:', fileName);
-                            resolve();
-                        }
-                    );
-                });
-            } catch (error) {
-                console.error('Upload setup error:', error);
-                fileObj.status = 'error';
-                updateFileList();
-            }
-        }
-
-        function updateStats() {
-            const successCount = selectedFiles.filter(f => f.status === 'success').length;
-            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
-            const totalCount = selectedFiles.length;
-
-            document.getElementById('successCount').textContent = `✅ ${successCount} gelukt`;
-            document.getElementById('errorCount').textContent = `❌ ${errorCount} mislukt`;
-            document.getElementById('totalCount').textContent = `📊 ${totalCount} totaal`;
-            
-            const uploadStats = document.getElementById('uploadStats');
-            uploadStats.style.display = totalCount > 0 ? 'flex' : 'none';
-        }
-    </script>
+        document.getElementById('successCount').textContent = `✅ ${successCount} gelukt`;
+        document.getElementById('errorCount').textContent = `❌ ${errorCount} mislukt`;
+        document.getElementById('totalCount').textContent = `📊 ${totalCount} totaal`;
+        
+        const uploadStats = document.getElementById('uploadStats');
+        uploadStats.style.display = totalCount > 0 ? 'flex' : 'none';
+    }
+</script>
 </body>
 </html>
