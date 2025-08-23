@@ -799,4 +799,215 @@
         function getStatusText(status, progress) {
             switch (status) {
                 case 'ready': return 'Klaar om te uploaden';
-                case 'compressing': return `Comprimeren... ${progress}
+                case 'compressing': return `Comprimeren... ${progress}%`;
+                case 'uploading': return `Uploaden... ${progress}%`;
+                case 'success': return '✅ Geüpload!';
+                case 'error': return '❌ Upload mislukt';
+                default: return '';
+            }
+        }
+
+        function removeFile(index) {
+            if (selectedFiles[index] && selectedFiles[index].status !== 'uploading' && selectedFiles[index].status !== 'compressing') {
+                selectedFiles.splice(index, 1);
+                updateFileList();
+                updateUploadButton();
+            }
+        }
+
+        function updateUploadButton() {
+            const readyFiles = selectedFiles.filter(f => f.status === 'ready').length;
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            uploadBtn.disabled = readyFiles === 0 || !isFirebaseReady;
+            
+            if (readyFiles === 0) {
+                uploadBtn.textContent = '🚀 Foto\'s Uploaden';
+            } else {
+                uploadBtn.textContent = `🚀 ${readyFiles} foto${readyFiles > 1 ? "'s" : ""} uploaden`;
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.style.display = 'block';
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.textContent = message;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function updateStats() {
+            const successCount = selectedFiles.filter(f => f.status === 'success').length;
+            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
+            const totalCount = selectedFiles.length;
+
+            document.getElementById('successCount').textContent = successCount;
+            document.getElementById('errorCount').textContent = errorCount;
+            document.getElementById('totalCount').textContent = totalCount;
+            
+            const uploadStats = document.getElementById('uploadStats');
+            uploadStats.style.display = totalCount > 0 ? 'flex' : 'none';
+        }
+        // Comprimeer afbeelding voor snellere upload
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    // Bereken nieuwe dimensies
+                    let { width, height } = img;
+                    const maxDim = OPTIMIZATION_SETTINGS.maxDimension;
+                    
+                    if (maxDim > 0 && (width > maxDim || height > maxDim)) {
+                        if (width > height) {
+                            height = (height * maxDim) / width;
+                            width = maxDim;
+                        } else {
+                            width = (width * maxDim) / height;
+                            height = maxDim;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Teken afbeelding op canvas
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Converteer naar blob
+                    canvas.toBlob(
+                        resolve,
+                        'image/jpeg',
+                        OPTIMIZATION_SETTINGS.compressionQuality
+                    );
+                };
+                
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        async function startUpload() {
+            if (!isFirebaseReady) {
+                showStatus('❌ Firebase niet geconfigureerd', 'error');
+                return;
+            }
+
+            const readyFiles = selectedFiles.filter(f => f.status === 'ready');
+            if (readyFiles.length === 0) return;
+
+            const uploaderName = document.getElementById('uploaderName').value.trim() || 'Anoniem';
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '📤 Uploaden...';
+            
+            // Laad upload functie
+            const { ref, uploadBytesResumable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+            
+            // Upload files in batches voor optimale snelheid
+            const maxConcurrent = OPTIMIZATION_SETTINGS.maxConcurrent;
+            for (let i = 0; i < readyFiles.length; i += maxConcurrent) {
+                const batch = readyFiles.slice(i, i + maxConcurrent);
+                await Promise.all(batch.map(fileObj => uploadFile(fileObj, uploaderName, ref, uploadBytesResumable)));
+            }
+            
+            updateUploadButton();
+            updateStats();
+            
+            const successCount = selectedFiles.filter(f => f.status === 'success').length;
+            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
+            
+            if (errorCount === 0) {
+                showStatus(`🎉 Alle ${successCount} foto's succesvol geüpload!`, 'success');
+                
+                // Reset form after successful upload
+                setTimeout(() => {
+                    selectedFiles = selectedFiles.filter(f => f.status !== 'success');
+                    updateFileList();
+                    updateUploadButton();
+                    document.getElementById('uploaderName').value = '';
+                }, 3000);
+            } else {
+                showStatus(`⚠️ ${successCount} gelukt, ${errorCount} mislukt. Probeer mislukte opnieuw.`, 'error');
+            }
+        }
+
+        async function uploadFile(fileObj, uploaderName, ref, uploadBytesResumable) {
+            try {
+                // Stap 1: Comprimeren als ingesteld
+                let uploadFile = fileObj.file;
+                if (OPTIMIZATION_SETTINGS.autoCompress && fileObj.file.type.startsWith('image/')) {
+                    fileObj.status = 'compressing';
+                    fileObj.progress = 0;
+                    updateFileList();
+                    
+                    // Simuleer compressie voortgang
+                    for (let i = 0; i <= 50; i += 10) {
+                        fileObj.progress = i;
+                        updateFileList();
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    }
+                    
+                    const compressedBlob = await compressImage(fileObj.file);
+                    if (compressedBlob && compressedBlob.size < fileObj.file.size) {
+                        uploadFile = compressedBlob;
+                        fileObj.compressedSize = compressedBlob.size;
+                    }
+                    
+                    fileObj.progress = 100;
+                    updateFileList();
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+                
+                // Stap 2: Uploaden
+                fileObj.status = 'uploading';
+                fileObj.progress = 0;
+                updateFileList();
+
+                // Create storage reference
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const fileName = `${timestamp}_${uploaderName}_${fileObj.file.name}`;
+                const storageRef = ref(storage, `uploads/${fileName}`);
+
+                // Upload met optimale chunk size
+                const uploadTask = uploadBytesResumable(storageRef, uploadFile, {
+                    cacheControl: 'public,max-age=31536000',
+                });
+                
+                return new Promise((resolve, reject) => {
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            fileObj.progress = Math.round(progress);
+                            updateFileList();
+                        },
+                        (error) => {
+                            console.error('Upload error:', error);
+                            fileObj.status = 'error';
+                            updateFileList();
+                            reject(error);
+                        },
+                        () => {
+                            fileObj.status = 'success';
+                            fileObj.progress = 100;
+                            updateFileList();
+                            console.log('Upload successful:', fileName);
+                            resolve();
+                        }
+                    );
+                });
+            } catch (error) {
+                console.error('Upload setup error:', error);
+                fileObj.status = 'error';
+                updateFileList();
+            }
+        }
