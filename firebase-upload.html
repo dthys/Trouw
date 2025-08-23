@@ -440,13 +440,26 @@
         });
 
         function handleFiles(e) {
+            console.log('handleFiles called with', e.target.files.length, 'files'); // Debug log
             const files = Array.from(e.target.files);
             addFiles(files);
         }
 
         function addFiles(files) {
+            console.log('addFiles called with', files.length, 'files'); // Debug log
+            console.log('Current selectedFiles length:', selectedFiles.length); // Debug log
+            
             files.forEach(file => {
-                if (!selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                console.log('Processing file:', file.name, file.type, file.size); // Debug log
+                
+                // Check if file is already added
+                const isDuplicate = selectedFiles.some(f => 
+                    f.file.name === file.name && f.file.size === file.size
+                );
+                
+                console.log('Is duplicate?', isDuplicate); // Debug log
+                
+                if (!isDuplicate) {
                     const fileObj = {
                         file: file,
                         id: Date.now() + Math.random(),
@@ -454,14 +467,17 @@
                         progress: 0
                     };
                     selectedFiles.push(fileObj);
+                    console.log('File added:', fileObj.id, fileObj.file.name); // Debug log
                 }
             });
             
+            console.log('Updated selectedFiles length:', selectedFiles.length); // Debug log
             updateFileList();
             updateUploadButton();
         }
 
         function updateFileList() {
+            console.log('updateFileList called, files:', selectedFiles.length); // Debug log
             fileList.innerHTML = '';
             
             selectedFiles.forEach((fileObj, index) => {
@@ -495,7 +511,8 @@
 
         // Global functions (needed for onclick handlers)
         window.removeFile = function(index) {
-            if (selectedFiles[index].status !== 'uploading') {
+            console.log('removeFile called for index:', index); // Debug log
+            if (selectedFiles[index] && selectedFiles[index].status !== 'uploading') {
                 selectedFiles.splice(index, 1);
                 updateFileList();
                 updateUploadButton();
@@ -504,6 +521,8 @@
 
         function updateUploadButton() {
             const readyFiles = selectedFiles.filter(f => f.status === 'ready').length;
+            console.log('updateUploadButton: readyFiles =', readyFiles, 'isFirebaseReady =', isFirebaseReady); // Debug log
+            
             uploadBtn.disabled = readyFiles === 0 || !isFirebaseReady;
             
             if (readyFiles === 0) {
@@ -634,6 +653,7 @@
 
         // Initialize on page load
         window.addEventListener('load', () => {
+            console.log('Page loaded, initializing Firebase...'); // Debug log
             initFirebase();
         });
     </script>
