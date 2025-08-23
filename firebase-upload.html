@@ -271,6 +271,17 @@
             margin-bottom: 10px;
         }
 
+        .debug-info {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: #00ffff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -297,6 +308,11 @@
             <p>Deel je mooiste momenten - geen login vereist!</p>
         </div>
 
+        <!-- Debug Info -->
+        <div class="debug-info" id="debugInfo">
+            Debug: Wachten op initialisatie...
+        </div>
+
         <!-- Firebase Setup Warning -->
         <div class="setup-warning" id="setupWarning">
             <h3>🔧 Firebase Setup Vereist</h3>
@@ -314,7 +330,7 @@
                 <h3>Sleep foto's hiernaartoe</h3>
                 <p style="margin: 10px 0;">of klik om bestanden te selecteren</p>
                 
-                <label for="photos" class="file-input-label" onclick="event.stopPropagation();">
+                <label for="photos" class="file-input-label">
                     📸 Foto's Kiezen
                 </label>
                 <input type="file" id="photos" multiple accept="image/*" class="file-input">
@@ -366,122 +382,138 @@
         </div>
     </div>
 
-    <!-- Firebase SDK v9 (nieuwe versie) -->
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
-
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDQjVGR_GkYWYM2FttcXdQP-fIiaASLIAQ",
-            authDomain: "bruiloft-fotos.firebaseapp.com",
-            projectId: "bruiloft-fotos",
-            storageBucket: "bruiloft-fotos.firebasestorage.app",
-            messagingSenderId: "340277358648",
-            appId: "1:340277358648:web:c4da4360cf91b61cf7b6cd",
-            measurementId: "G-KHT66TGJTV"
-        };
-
-        let app, storage;
+    <script>
+        // Global variables - niet in modules om problemen te voorkomen
         let selectedFiles = [];
         let isFirebaseReady = false;
+        let app, storage;
 
-        // Initialize Firebase
-        function initFirebase() {
+        const debugInfo = document.getElementById('debugInfo');
+        function updateDebug(message) {
+            debugInfo.textContent = `Debug: ${message}`;
+            console.log(message);
+        }
+
+        // Wacht tot DOM geladen is
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDebug('DOM geladen, Firebase wordt geïnitialiseerd...');
+            
+            // Laad Firebase dynamisch
+            loadFirebase();
+        });
+
+        async function loadFirebase() {
             try {
+                // Laad Firebase modules
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                const { getStorage, ref, uploadBytesResumable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+                
+                updateDebug('Firebase modules geladen');
+
+                // Firebase Configuration
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDQjVGR_GkYWYM2FttcXdQP-fIiaASLIAQ",
+                    authDomain: "bruiloft-fotos.firebaseapp.com",
+                    projectId: "bruiloft-fotos",
+                    storageBucket: "bruiloft-fotos.firebasestorage.app",
+                    messagingSenderId: "340277358648",
+                    appId: "1:340277358648:web:c4da4360cf91b61cf7b6cd",
+                    measurementId: "G-KHT66TGJTV"
+                };
+
                 app = initializeApp(firebaseConfig);
                 storage = getStorage(app);
                 isFirebaseReady = true;
+                
+                updateDebug('Firebase geïnitialiseerd');
                 
                 // Hide setup warning
                 document.getElementById('setupWarning').style.display = 'none';
                 showStatus('🔥 Firebase geladen - klaar om te uploaden!', 'success');
                 
-                console.log('Firebase initialized successfully');
+                // Nu Firebase klaar is, setup file handling
+                setupFileHandling();
+                
             } catch (error) {
-                console.error('Firebase initialization error:', error);
+                updateDebug('Firebase fout: ' + error.message);
                 showStatus('❌ Firebase initialisatie mislukt: ' + error.message, 'error');
             }
         }
 
-        // Prevent any accidental form submissions
-        document.addEventListener('submit', (e) => {
-            e.preventDefault();
-            console.log('Form submit prevented');
-        });
-
-        // Debug: Check if page is being reloaded
-        window.addEventListener('beforeunload', (e) => {
-            console.log('Page is being unloaded');
-        });
-
-        // File handling
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('photos');
-        const fileList = document.getElementById('fileList');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const uploadStats = document.getElementById('uploadStats');
-
-        fileInput.addEventListener('change', handleFiles);
-
-        // Drag and drop
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = Array.from(e.dataTransfer.files).filter(file => 
-                file.type.startsWith('image/') || file.type === 'image/heic'
-            );
-            addFiles(files);
-        });
-
-        uploadArea.addEventListener('click', (e) => {
-            // Prevent any default behavior
-            e.preventDefault();
-            e.stopPropagation();
+        function setupFileHandling() {
+            updateDebug('File handling wordt ingesteld...');
             
-            // Only trigger file input if not clicking on the label or input itself
-            if (e.target !== fileInput && !e.target.classList.contains('file-input-label')) {
-                fileInput.click();
-            }
-        });
+            const fileInput = document.getElementById('photos');
+            const uploadArea = document.getElementById('uploadArea');
+            
+            // File input change event
+            fileInput.addEventListener('change', function(e) {
+                updateDebug(`Files geselecteerd: ${e.target.files.length}`);
+                handleFiles(e);
+            });
+            
+            // Drag and drop events
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = Array.from(e.dataTransfer.files).filter(file => 
+                    file.type.startsWith('image/') || file.type === 'image/heic'
+                );
+                
+                updateDebug(`Files gedropt: ${files.length}`);
+                addFiles(files);
+            });
+
+            // Click to select files
+            uploadArea.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('file-input-label') && e.target !== fileInput) {
+                    updateDebug('Upload area geklikt');
+                    fileInput.click();
+                }
+            });
+
+            // Upload button
+            document.getElementById('uploadBtn').addEventListener('click', startUpload);
+            
+            updateDebug('File handling ingesteld');
+        }
 
         function handleFiles(e) {
-            console.log('handleFiles called with', e.target.files.length, 'files'); // Debug log
+            updateDebug('handleFiles aangeroepen');
             const files = Array.from(e.target.files);
             
-            // Process files
+            if (files.length === 0) {
+                updateDebug('Geen files geselecteerd');
+                return;
+            }
+            
+            updateDebug(`Verwerken van ${files.length} files`);
             addFiles(files);
             
-            // Clear the input value so the same files can be selected again if needed
-            // But do this AFTER processing to avoid losing the files
+            // Reset input after processing
             setTimeout(() => {
                 e.target.value = '';
             }, 100);
         }
 
         function addFiles(files) {
-            console.log('addFiles called with', files.length, 'files'); // Debug log
-            console.log('Current selectedFiles length:', selectedFiles.length); // Debug log
+            updateDebug(`addFiles: ${files.length} bestanden toevoegen`);
             
+            let added = 0;
             files.forEach(file => {
-                console.log('Processing file:', file.name, file.type, file.size); // Debug log
-                
-                // Check if file is already added
                 const isDuplicate = selectedFiles.some(f => 
                     f.file.name === file.name && f.file.size === file.size
                 );
-                
-                console.log('Is duplicate?', isDuplicate); // Debug log
                 
                 if (!isDuplicate) {
                     const fileObj = {
@@ -491,17 +523,17 @@
                         progress: 0
                     };
                     selectedFiles.push(fileObj);
-                    console.log('File added:', fileObj.id, fileObj.file.name); // Debug log
+                    added++;
                 }
             });
             
-            console.log('Updated selectedFiles length:', selectedFiles.length); // Debug log
+            updateDebug(`${added} nieuwe bestanden toegevoegd, totaal: ${selectedFiles.length}`);
             updateFileList();
             updateUploadButton();
         }
 
         function updateFileList() {
-            console.log('updateFileList called, files:', selectedFiles.length); // Debug log
+            const fileList = document.getElementById('fileList');
             fileList.innerHTML = '';
             
             selectedFiles.forEach((fileObj, index) => {
@@ -510,12 +542,14 @@
                 fileItem.innerHTML = `
                     <div class="file-info">
                         <div class="file-name">📸 ${fileObj.file.name}</div>
-                        <div class="file-status ${fileObj.status}" id="status-${fileObj.id}">
+                        <div class="file-status ${fileObj.status}">
                             ${getStatusText(fileObj.status, fileObj.progress)}
                         </div>
-                        <div class="progress-bar" style="display: ${fileObj.status === 'uploading' ? 'block' : 'none'};" id="progress-${fileObj.id}">
-                            <div class="progress-fill" style="width: ${fileObj.progress}%"></div>
-                        </div>
+                        ${fileObj.status === 'uploading' ? `
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${fileObj.progress}%"></div>
+                            </div>
+                        ` : ''}
                     </div>
                     <button type="button" class="remove-file" onclick="removeFile(${index})" ${fileObj.status === 'uploading' ? 'disabled' : ''}>×</button>
                 `;
@@ -533,19 +567,18 @@
             }
         }
 
-        // Global functions (needed for onclick handlers)
-        window.removeFile = function(index) {
-            console.log('removeFile called for index:', index); // Debug log
+        function removeFile(index) {
             if (selectedFiles[index] && selectedFiles[index].status !== 'uploading') {
                 selectedFiles.splice(index, 1);
+                updateDebug(`Bestand verwijderd, ${selectedFiles.length} over`);
                 updateFileList();
                 updateUploadButton();
             }
-        };
+        }
 
         function updateUploadButton() {
             const readyFiles = selectedFiles.filter(f => f.status === 'ready').length;
-            console.log('updateUploadButton: readyFiles =', readyFiles, 'isFirebaseReady =', isFirebaseReady); // Debug log
+            const uploadBtn = document.getElementById('uploadBtn');
             
             uploadBtn.disabled = readyFiles === 0 || !isFirebaseReady;
             
@@ -569,117 +602,11 @@
             }
         }
 
-        function updateStats() {
-            const successCount = selectedFiles.filter(f => f.status === 'success').length;
-            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
-            const totalCount = selectedFiles.length;
-
-            document.getElementById('successCount').textContent = `✅ ${successCount} gelukt`;
-            document.getElementById('errorCount').textContent = `❌ ${errorCount} mislukt`;
-            document.getElementById('totalCount').textContent = `📊 ${totalCount} totaal`;
-            
-            uploadStats.style.display = totalCount > 0 ? 'flex' : 'none';
+        async function startUpload() {
+            updateDebug('Upload gestart');
+            // Upload logic komt hier
+            showStatus('Upload functionaliteit wordt nog geïmplementeerd', 'info');
         }
-
-        // Upload functionality
-        uploadBtn.addEventListener('click', async () => {
-            if (!isFirebaseReady) {
-                showStatus('❌ Firebase niet geconfigureerd', 'error');
-                return;
-            }
-
-            const readyFiles = selectedFiles.filter(f => f.status === 'ready');
-            if (readyFiles.length === 0) return;
-
-            const uploaderName = document.getElementById('uploaderName').value.trim() || 'Anoniem';
-            
-            uploadBtn.disabled = true;
-            uploadBtn.textContent = '📤 Uploaden...';
-            
-            // Upload files concurrently (max 3 at a time)
-            const maxConcurrent = 3;
-            for (let i = 0; i < readyFiles.length; i += maxConcurrent) {
-                const batch = readyFiles.slice(i, i + maxConcurrent);
-                await Promise.all(batch.map(fileObj => uploadFile(fileObj, uploaderName)));
-            }
-            
-            updateUploadButton();
-            updateStats();
-            
-            const successCount = selectedFiles.filter(f => f.status === 'success').length;
-            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
-            
-            if (errorCount === 0) {
-                showStatus(`🎉 Alle ${successCount} foto's succesvol geüpload!`, 'success');
-                
-                // Reset form after successful upload
-                setTimeout(() => {
-                    selectedFiles = selectedFiles.filter(f => f.status !== 'success');
-                    updateFileList();
-                    updateUploadButton();
-                    document.getElementById('uploaderName').value = '';
-                }, 3000);
-            } else {
-                showStatus(`⚠️ ${successCount} gelukt, ${errorCount} mislukt. Probeer mislukte opnieuw.`, 'error');
-            }
-        });
-
-        async function uploadFile(fileObj, uploaderName) {
-            try {
-                fileObj.status = 'uploading';
-                fileObj.progress = 0;
-                updateFileList();
-
-                // Create storage reference
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                const fileName = `${timestamp}_${uploaderName}_${fileObj.file.name}`;
-                const storageRef = ref(storage, `uploads/${fileName}`);
-
-                // Upload with progress tracking
-                const uploadTask = uploadBytesResumable(storageRef, fileObj.file);
-                
-                return new Promise((resolve, reject) => {
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            fileObj.progress = Math.round(progress);
-                            
-                            // Update UI
-                            const statusEl = document.getElementById(`status-${fileObj.id}`);
-                            const progressEl = document.getElementById(`progress-${fileObj.id}`);
-                            if (statusEl) statusEl.textContent = getStatusText('uploading', fileObj.progress);
-                            if (progressEl) {
-                                progressEl.style.display = 'block';
-                                progressEl.querySelector('.progress-fill').style.width = `${fileObj.progress}%`;
-                            }
-                        },
-                        (error) => {
-                            console.error('Upload error:', error);
-                            fileObj.status = 'error';
-                            updateFileList();
-                            reject(error);
-                        },
-                        () => {
-                            fileObj.status = 'success';
-                            fileObj.progress = 100;
-                            updateFileList();
-                            console.log('Upload successful:', fileName);
-                            resolve();
-                        }
-                    );
-                });
-            } catch (error) {
-                console.error('Upload setup error:', error);
-                fileObj.status = 'error';
-                updateFileList();
-            }
-        }
-
-        // Initialize on page load
-        window.addEventListener('load', () => {
-            console.log('Page loaded, initializing Firebase...'); // Debug log
-            initFirebase();
-        });
     </script>
 </body>
 </html>
