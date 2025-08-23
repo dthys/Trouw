@@ -314,7 +314,7 @@
                 <h3>Sleep foto's hiernaartoe</h3>
                 <p style="margin: 10px 0;">of klik om bestanden te selecteren</p>
                 
-                <label for="photos" class="file-input-label">
+                <label for="photos" class="file-input-label" onclick="event.stopPropagation();">
                     📸 Foto's Kiezen
                 </label>
                 <input type="file" id="photos" multiple accept="image/*" class="file-input">
@@ -405,6 +405,17 @@
             }
         }
 
+        // Prevent any accidental form submissions
+        document.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log('Form submit prevented');
+        });
+
+        // Debug: Check if page is being reloaded
+        window.addEventListener('beforeunload', (e) => {
+            console.log('Page is being unloaded');
+        });
+
         // File handling
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('photos');
@@ -434,7 +445,12 @@
         });
 
         uploadArea.addEventListener('click', (e) => {
-            if (e.target !== fileInput) {
+            // Prevent any default behavior
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Only trigger file input if not clicking on the label or input itself
+            if (e.target !== fileInput && !e.target.classList.contains('file-input-label')) {
                 fileInput.click();
             }
         });
@@ -442,7 +458,15 @@
         function handleFiles(e) {
             console.log('handleFiles called with', e.target.files.length, 'files'); // Debug log
             const files = Array.from(e.target.files);
+            
+            // Process files
             addFiles(files);
+            
+            // Clear the input value so the same files can be selected again if needed
+            // But do this AFTER processing to avoid losing the files
+            setTimeout(() => {
+                e.target.value = '';
+            }, 100);
         }
 
         function addFiles(files) {
