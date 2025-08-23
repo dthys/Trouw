@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Foto's Delen - Geoptimaliseerd</title>
+    <title>✨ Foto's Delen</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -164,8 +164,6 @@
             margin-bottom: 10px;
             font-weight: 600;
         }
-
-
 
         .upload-section {
             background: rgba(247, 250, 252, 0.8);
@@ -336,19 +334,12 @@
             max-width: 300px;
         }
 
-        .file-size {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            margin-bottom: 5px;
-        }
-
         .file-status {
             font-size: 0.85rem;
             font-weight: 500;
         }
 
         .file-status.ready { color: #3182ce; }
-        .file-status.compressing { color: #f59e0b; }
         .file-status.uploading { color: #ed8936; }
         .file-status.success { color: #38a169; }
         .file-status.error { color: #e53e3e; }
@@ -536,10 +527,6 @@
                 flex-direction: column;
                 gap: 15px;
             }
-
-            .settings-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         @media (max-width: 480px) {
@@ -568,7 +555,7 @@
         <div class="header">
             <div class="header-emoji">📸</div>
             <h1>Foto's Delen</h1>
-            <p>Deel je mooiste momenten - automatisch geoptimaliseerd!</p>
+            <p>Deel je mooiste momenten - simpel & snel!</p>
         </div>
 
         <!-- Firebase Setup Warning -->
@@ -576,8 +563,6 @@
             <h3>🔧 Firebase Setup Vereist</h3>
             <p>Om foto uploads te laten werken, moet je eerst Firebase configureren.</p>
         </div>
-
-
 
         <div class="upload-section">
             <div class="form-group">
@@ -596,7 +581,7 @@
                 <input type="file" id="photos" multiple accept="image/*" class="file-input">
                 
                 <p style="font-size: 0.9rem; color: #a0aec0; margin-top: 15px;">
-                    Onbeperkt aantal foto's • Automatisch gecomprimeerd voor snelle upload
+                    Onbeperkt aantal foto's • JPG, PNG, HEIC toegestaan
                 </p>
             </div>
 
@@ -632,15 +617,6 @@
         let isFirebaseReady = false;
         let app, storage;
 
-        // Optimale instellingen (hardcoded voor beste snelheid)
-        const OPTIMIZATION_SETTINGS = {
-            compressionQuality: 0.7,        // 70% kwaliteit - goede balans
-            maxConcurrent: 6,               // 6 gelijktijdige uploads
-            maxDimension: 1440,             // Max 1440px - mobiel vriendelijk
-            autoCompress: true,             // Altijd comprimeren
-            chunkSize: 1024 * 1024 * 2     // 2MB chunks voor betere prestaties
-        };
-
         // Wacht tot DOM geladen is
         document.addEventListener('DOMContentLoaded', function() {
             loadFirebase();
@@ -669,7 +645,7 @@
                 
                 // Hide setup warning
                 document.getElementById('setupWarning').style.display = 'none';
-                showStatus('🔥 Firebase geladen - automatisch geoptimaliseerd voor snelheid!', 'success');
+                showStatus('🔥 Firebase geladen - klaar om te uploaden!', 'success');
                 
                 // Setup file handling
                 setupFileHandling();
@@ -743,7 +719,6 @@
                 if (!isDuplicate) {
                     const fileObj = {
                         file: file,
-                        originalSize: file.size,
                         id: Date.now() + Math.random(),
                         status: 'ready',
                         progress: 0
@@ -757,14 +732,6 @@
             updateUploadButton();
         }
 
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-
         function updateFileList() {
             const fileList = document.getElementById('fileList');
             fileList.innerHTML = '';
@@ -772,25 +739,19 @@
             selectedFiles.forEach((fileObj, index) => {
                 const fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
-                
-                const sizeDisplay = fileObj.compressedSize ? 
-                    `${formatFileSize(fileObj.compressedSize)} (was ${formatFileSize(fileObj.originalSize)})` : 
-                    formatFileSize(fileObj.originalSize);
-                
                 fileItem.innerHTML = `
                     <div class="file-info">
                         <div class="file-name">📸 ${fileObj.file.name}</div>
-                        <div class="file-size">${sizeDisplay}</div>
                         <div class="file-status ${fileObj.status}">
                             ${getStatusText(fileObj.status, fileObj.progress)}
                         </div>
-                        ${(fileObj.status === 'uploading' || fileObj.status === 'compressing') ? `
+                        ${fileObj.status === 'uploading' ? `
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${fileObj.progress}%"></div>
                             </div>
                         ` : ''}
                     </div>
-                    <button type="button" class="remove-file" onclick="removeFile(${index})" ${(fileObj.status === 'uploading' || fileObj.status === 'compressing') ? 'disabled' : ''}>×</button>
+                    <button type="button" class="remove-file" onclick="removeFile(${index})" ${fileObj.status === 'uploading' ? 'disabled' : ''}>×</button>
                 `;
                 fileList.appendChild(fileItem);
             });
@@ -799,7 +760,6 @@
         function getStatusText(status, progress) {
             switch (status) {
                 case 'ready': return 'Klaar om te uploaden';
-                case 'compressing': return `Comprimeren... ${progress}%`;
                 case 'uploading': return `Uploaden... ${progress}%`;
                 case 'success': return '✅ Geüpload!';
                 case 'error': return '❌ Upload mislukt';
@@ -808,7 +768,7 @@
         }
 
         function removeFile(index) {
-            if (selectedFiles[index] && selectedFiles[index].status !== 'uploading' && selectedFiles[index].status !== 'compressing') {
+            if (selectedFiles[index] && selectedFiles[index].status !== 'uploading') {
                 selectedFiles.splice(index, 1);
                 updateFileList();
                 updateUploadButton();
@@ -841,60 +801,6 @@
             }
         }
 
-        function updateStats() {
-            const successCount = selectedFiles.filter(f => f.status === 'success').length;
-            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
-            const totalCount = selectedFiles.length;
-
-            document.getElementById('successCount').textContent = successCount;
-            document.getElementById('errorCount').textContent = errorCount;
-            document.getElementById('totalCount').textContent = totalCount;
-            
-            const uploadStats = document.getElementById('uploadStats');
-            uploadStats.style.display = totalCount > 0 ? 'flex' : 'none';
-        }
-        // Comprimeer afbeelding voor snellere upload
-        function compressImage(file) {
-            return new Promise((resolve) => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const img = new Image();
-                
-                img.onload = function() {
-                    // Bereken nieuwe dimensies
-                    let { width, height } = img;
-                    const maxDim = OPTIMIZATION_SETTINGS.maxDimension;
-                    
-                    if (maxDim > 0 && (width > maxDim || height > maxDim)) {
-                        if (width > height) {
-                            height = (height * maxDim) / width;
-                            width = maxDim;
-                        } else {
-                            width = (width * maxDim) / height;
-                            height = maxDim;
-                        }
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    
-                    // Teken afbeelding op canvas
-                    ctx.fillStyle = 'white';
-                    ctx.fillRect(0, 0, width, height);
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // Converteer naar blob
-                    canvas.toBlob(
-                        resolve,
-                        'image/jpeg',
-                        OPTIMIZATION_SETTINGS.compressionQuality
-                    );
-                };
-                
-                img.src = URL.createObjectURL(file);
-            });
-        }
-
         async function startUpload() {
             if (!isFirebaseReady) {
                 showStatus('❌ Firebase niet geconfigureerd', 'error');
@@ -913,8 +819,8 @@
             // Laad upload functie
             const { ref, uploadBytesResumable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
             
-            // Upload files in batches voor optimale snelheid
-            const maxConcurrent = OPTIMIZATION_SETTINGS.maxConcurrent;
+            // Upload files concurrently (max 3 at a time)
+            const maxConcurrent = 3;
             for (let i = 0; i < readyFiles.length; i += maxConcurrent) {
                 const batch = readyFiles.slice(i, i + maxConcurrent);
                 await Promise.all(batch.map(fileObj => uploadFile(fileObj, uploaderName, ref, uploadBytesResumable)));
@@ -943,32 +849,6 @@
 
         async function uploadFile(fileObj, uploaderName, ref, uploadBytesResumable) {
             try {
-                // Stap 1: Comprimeren als ingesteld
-                let uploadFile = fileObj.file;
-                if (OPTIMIZATION_SETTINGS.autoCompress && fileObj.file.type.startsWith('image/')) {
-                    fileObj.status = 'compressing';
-                    fileObj.progress = 0;
-                    updateFileList();
-                    
-                    // Simuleer compressie voortgang
-                    for (let i = 0; i <= 50; i += 10) {
-                        fileObj.progress = i;
-                        updateFileList();
-                        await new Promise(resolve => setTimeout(resolve, 50));
-                    }
-                    
-                    const compressedBlob = await compressImage(fileObj.file);
-                    if (compressedBlob && compressedBlob.size < fileObj.file.size) {
-                        uploadFile = compressedBlob;
-                        fileObj.compressedSize = compressedBlob.size;
-                    }
-                    
-                    fileObj.progress = 100;
-                    updateFileList();
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                }
-                
-                // Stap 2: Uploaden
                 fileObj.status = 'uploading';
                 fileObj.progress = 0;
                 updateFileList();
@@ -978,10 +858,8 @@
                 const fileName = `${timestamp}_${uploaderName}_${fileObj.file.name}`;
                 const storageRef = ref(storage, `uploads/${fileName}`);
 
-                // Upload met optimale chunk size
-                const uploadTask = uploadBytesResumable(storageRef, uploadFile, {
-                    cacheControl: 'public,max-age=31536000',
-                });
+                // Upload with progress tracking
+                const uploadTask = uploadBytesResumable(storageRef, fileObj.file);
                 
                 return new Promise((resolve, reject) => {
                     uploadTask.on('state_changed',
@@ -1011,3 +889,19 @@
                 updateFileList();
             }
         }
+
+        function updateStats() {
+            const successCount = selectedFiles.filter(f => f.status === 'success').length;
+            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
+            const totalCount = selectedFiles.length;
+
+            document.getElementById('successCount').textContent = `✅ ${successCount} gelukt`;
+            document.getElementById('errorCount').textContent = `❌ ${errorCount} mislukt`;
+            document.getElementById('totalCount').textContent = `📊 ${totalCount} totaal`;
+            
+            const uploadStats = document.getElementById('uploadStats');
+            uploadStats.style.display = totalCount > 0 ? 'flex' : 'none';
+        }
+    </script>
+</body>
+</html>
