@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foto Upload - Deel je Herinneringen</title>
+    <title>📸 Foto's Uploaden</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -36,7 +36,7 @@
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 10px;
             background: linear-gradient(45deg, #fff, #f0f0f0);
             -webkit-background-clip: text;
@@ -49,42 +49,25 @@
             opacity: 0.9;
         }
 
-        .qr-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #333;
-        }
-
-        .qr-code {
-            width: 200px;
-            height: 200px;
-            background: white;
-            border-radius: 10px;
-            margin: 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid #667eea;
-            font-size: 14px;
-            text-align: center;
-            padding: 20px;
-        }
-
         .upload-section {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            padding: 30px;
+            padding: 40px 30px;
             margin-bottom: 20px;
             border: 2px dashed rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
+            text-align: center;
         }
 
         .upload-section:hover {
             border-color: rgba(255, 255, 255, 0.6);
             background: rgba(255, 255, 255, 0.15);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.8;
         }
 
         .file-input-wrapper {
@@ -105,33 +88,27 @@
         .file-input-button {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             border: none;
-            padding: 15px 30px;
+            padding: 18px 35px;
             border-radius: 50px;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .file-input-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            opacity: 0.7;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
         }
 
         .file-preview {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 25px;
         }
 
         .preview-item {
@@ -152,62 +129,42 @@
             position: absolute;
             top: 5px;
             right: 5px;
-            background: rgba(255, 0, 0, 0.8);
+            background: rgba(255, 0, 0, 0.9);
             border: none;
             border-radius: 50%;
-            width: 25px;
-            height: 25px;
+            width: 28px;
+            height: 28px;
             color: white;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
         }
 
         .upload-btn {
             background: linear-gradient(45deg, #10ac84, #00d2d3);
             border: none;
-            padding: 15px 40px;
+            padding: 18px 40px;
             border-radius: 50px;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 25px;
             width: 100%;
             transition: all 0.3s ease;
         }
 
         .upload-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(16, 172, 132, 0.4);
         }
 
         .upload-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-        }
-
-        .instructions {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-
-        .instructions h3 {
-            margin-bottom: 15px;
-            color: #fff;
-        }
-
-        .instructions ol {
-            padding-left: 20px;
-        }
-
-        .instructions li {
-            margin-bottom: 10px;
-            line-height: 1.6;
         }
 
         .status-message {
@@ -216,6 +173,7 @@
             border-radius: 10px;
             margin-top: 15px;
             display: none;
+            font-weight: 500;
         }
 
         .status-success {
@@ -230,19 +188,58 @@
             color: #ff6b6b;
         }
 
+        .status-info {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.5);
+            color: #3498db;
+        }
+
+        .photo-count {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .success-animation {
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            80% {
+                transform: translateY(-5px);
+            }
+        }
+
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
             .container {
-                margin: 10px;
                 padding: 20px;
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
-            
-            .qr-code {
-                width: 150px;
-                height: 150px;
+
+            .upload-section {
+                padding: 30px 20px;
+            }
+
+            .upload-icon {
+                font-size: 3rem;
+            }
+
+            .file-input-button {
+                font-size: 1.1rem;
+                padding: 15px 30px;
             }
         }
     </style>
@@ -250,334 +247,35 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📸 Foto Delen</h1>
-            <p>Upload je foto's en deel ze met iedereen via deze QR code</p>
-        </div>
-
-        <div class="qr-section">
-            <h3>🔗 Deel deze QR Code</h3>
-            <div class="qr-code" id="qrCode">
-                QR Code wordt hier gegenereerd
-                <br><br>
-                <small>Scan me om foto's te uploaden!</small>
-            </div>
-            <p><strong>Link:</strong> <span id="currentUrl"></span></p>
-            
-            <!-- URL Configuratie sectie -->
-            <div id="urlConfig" style="display: none; background: rgba(255, 193, 7, 0.1); padding: 20px; border-radius: 10px; margin-top: 15px; border: 1px solid rgba(255, 193, 7, 0.3);">
-                <h4 style="color: #856404; margin-bottom: 10px;">🔧 URL Instellen</h4>
-                <p style="color: #856404; font-size: 0.9rem; margin-bottom: 15px;">
-                    Voer de URL in waar deze app gehost wordt zodat mensen de QR code kunnen scannen:
-                </p>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <input type="url" 
-                           id="urlInput" 
-                           placeholder="https://jouwdomein.com/foto-upload" 
-                           style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.9rem;"
-                           value="https://jouwdomein.com/foto-upload">
-                    <button onclick="updateAppUrl()" 
-                            style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
-                        ✅ Instellen
-                    </button>
-                </div>
-                <p style="color: #856404; font-size: 0.8rem; margin-top: 10px;">
-                    <strong>Tip:</strong> Upload dit HTML bestand naar je webserver en gebruik die URL.
-                </p>
-            </div>
+            <h1>📸 Foto's Uploaden</h1>
+            <p>Selecteer je foto's en upload ze direct</p>
         </div>
 
         <div class="upload-section">
             <div class="upload-icon">📤</div>
-            <h3>Selecteer je foto's</h3>
-            <p>Klik hieronder om foto's te kiezen van je apparaat</p>
+            <h3 style="margin-bottom: 15px;">Kies je foto's</h3>
+            <p style="margin-bottom: 20px; opacity: 0.8;">Klik hieronder om foto's te selecteren van je telefoon of camera</p>
             
             <label class="file-input-wrapper">
                 <input type="file" class="file-input" multiple accept="image/*" id="fileInput">
-                <span class="file-input-button">🖼️ Foto's Kiezen</span>
+                <span class="file-input-button">🖼️ Foto's Selecteren</span>
             </label>
+            
+            <div class="photo-count" id="photoCount">Geen foto's geselecteerd</div>
             
             <div class="file-preview" id="filePreview"></div>
             
             <button class="upload-btn" id="uploadBtn" disabled>
-                🚀 Upload naar Gedeelde Drive
+                🚀 Upload Foto's
             </button>
             
             <div class="status-message" id="statusMessage"></div>
-        </div>
-
-        <div class="instructions">
-            <h3>📋 Hoe werkt het?</h3>
-            <ol>
-                <li><strong>QR Code delen:</strong> Deel de QR code hierboven met anderen</li>
-                <li><strong>Foto's selecteren:</strong> Klik op "Foto's Kiezen" om bestanden te selecteren</li>
-                <li><strong>Upload:</strong> Klik op "Upload naar Gedeelde Drive" om te delen</li>
-                <li><strong>Toegang:</strong> Iedereen met de link kan de foto's bekijken</li>
-            </ol>
-            
-            <p><strong>⚠️ Setup vereist:</strong> Om uploads werkend te maken, volg deze stappen:</p>
-            
-            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
-                <h4>🔧 Google Cloud Console Setup:</h4>
-                <ol style="font-size: 0.9rem; margin-top: 10px;">
-                    <li>Ga naar <a href="https://console.cloud.google.com" style="color: #64ffda;">console.cloud.google.com</a></li>
-                    <li>Maak nieuw project → Schakel Google Drive API in</li>
-                    <li>Ga naar "APIs & Services" → "Credentials"</li>
-                    <li>Maak "OAuth 2.0 Client ID" aan (Web application)</li>
-                    <li>Voeg jouw domein toe aan "Authorized origins"</li>
-                    <li>Kopieer Client ID en API Key naar de code (regel 267-268)</li>
-                </ol>
-                
-                <h4 style="margin-top: 15px;">📁 Drive Folder:</h4>
-                <p style="font-size: 0.9rem; margin-top: 5px;">
-                    ✅ Jouw folder is al geconfigureerd:<br>
-                    <strong>ID:</strong> 1gubSpYKWlFfIpe2bwUqAxUtCKm8ZOLgf
-                </p>
-            </div>
         </div>
     </div>
 
     <script>
         let selectedFiles = [];
-        let qrCodeLibraryLoaded = false;
         
-        // Configuratie - VERVANG DIT MET JOUW ECHTE URL
-        const APP_URL = 'https://jouwdomein.com/foto-upload'; // ⚠️ VERVANG DIT
-        
-        // URL configuratie sectie toevoegen
-        function showUrlConfig() {
-            const urlConfig = document.getElementById('urlConfig');
-            urlConfig.style.display = 'block';
-        }
-        
-        function updateAppUrl() {
-            const newUrl = document.getElementById('urlInput').value.trim();
-            if (newUrl && (newUrl.startsWith('http://') || newUrl.startsWith('https://'))) {
-                // Update de configuratie (in een echte app zou dit persistent zijn)
-                window.appUrl = newUrl;
-                document.getElementById('urlConfig').style.display = 'none';
-                generateQRCode();
-                showStatusMessage('✅ URL bijgewerkt! QR code opnieuw gegenereerd.', 'success');
-            } else {
-                showStatusMessage('❌ Voer een geldige URL in (moet beginnen met http:// of https://)', 'error');
-            }
-        }
-        
-        // Functie om de juiste URL te krijgen
-        function getAppUrl() {
-            // Eerst kijken of er een custom URL is ingesteld
-            if (window.appUrl) {
-                return window.appUrl;
-            }
-            
-            // Als APP_URL is ingesteld, gebruik die
-            if (APP_URL !== 'https://jouwdomein.com/foto-upload') {
-                return APP_URL;
-            }
-            
-            // Anders probeer de huidige locatie
-            const currentUrl = window.location.href;
-            if (currentUrl.includes('about:') || currentUrl.includes('blob:') || currentUrl.includes('data:')) {
-                // Ongeldige URL - toon configuratie
-                return null;
-            }
-            
-            return currentUrl;
-        }
-        
-        // QR Code library laden met fallback
-        function loadQRCodeLibrary() {
-            return new Promise((resolve, reject) => {
-                if (typeof QRCode !== 'undefined') {
-                    qrCodeLibraryLoaded = true;
-                    resolve();
-                    return;
-                }
-                
-                // Probeer eerst de primaire CDN
-                const script1 = document.createElement('script');
-                script1.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-                script1.onload = () => {
-                    qrCodeLibraryLoaded = true;
-                    resolve();
-                };
-                script1.onerror = () => {
-                    // Fallback naar tweede CDN
-                    const script2 = document.createElement('script');
-                    script2.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
-                    script2.onload = () => {
-                        qrCodeLibraryLoaded = true;
-                        resolve();
-                    };
-                    script2.onerror = () => {
-                        // Gebruik fallback zonder externe library
-                        generateQRCodeFallback();
-                        resolve();
-                    };
-                    document.head.appendChild(script2);
-                };
-                document.head.appendChild(script1);
-            });
-        }
-        
-        // Fallback QR code generator (simpele versie)
-        function generateQRCodeFallback() {
-            const currentUrl = window.location.href;
-            const qrCodeElement = document.getElementById('qrCode');
-            qrCodeElement.innerHTML = `
-                <div style="padding: 20px; text-align: center; background: white; border-radius: 10px; color: #333;">
-                    <div style="font-size: 2rem; margin-bottom: 10px;">📱</div>
-                    <strong>QR Code</strong><br>
-                    <small style="word-break: break-all; font-size: 0.8rem;">${currentUrl}</small><br><br>
-                    <a href="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}" 
-                       target="_blank" 
-                       style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
-                        🔗 Open QR Generator
-                    </a>
-                </div>
-            `;
-        }
-        
-        // QR Code genereren
-        async function generateQRCode() {
-            const appUrl = getAppUrl();
-            
-            if (!appUrl) {
-                // Toon URL configuratie als geen geldige URL beschikbaar is
-                const qrCodeElement = document.getElementById('qrCode');
-                qrCodeElement.innerHTML = `
-                    <div style="padding: 20px; text-align: center; background: #fff3cd; border-radius: 10px; color: #856404; border: 1px solid #ffeaa7;">
-                        <div style="font-size: 1.5rem; margin-bottom: 10px;">⚙️</div>
-                        <strong>URL Configuratie Vereist</strong><br>
-                        <small>Klik hieronder om jouw URL in te stellen</small>
-                    </div>
-                `;
-                document.getElementById('currentUrl').textContent = 'Nog niet ingesteld';
-                showUrlConfig();
-                return;
-            }
-            
-            document.getElementById('currentUrl').textContent = appUrl;
-            
-            const qrCodeElement = document.getElementById('qrCode');
-            qrCodeElement.innerHTML = '<div style="padding: 20px;">🔄 QR Code wordt geladen...</div>';
-            
-            try {
-                await loadQRCodeLibrary();
-                
-                if (typeof QRCode !== 'undefined') {
-                    qrCodeElement.innerHTML = '';
-                    
-                    QRCode.toCanvas(qrCodeElement, appUrl, {
-                        width: 180,
-                        height: 180,
-                        colorDark: '#667eea',
-                        colorLight: '#ffffff',
-                        margin: 2,
-                        correctLevel: QRCode.CorrectLevel.M
-                    }, function (error) {
-                        if (error) {
-                            console.error('QR Code canvas error:', error);
-                            generateQRCodeWithImage(appUrl);
-                        }
-                    });
-                } else {
-                    generateQRCodeWithImage(appUrl);
-                }
-            } catch (error) {
-                console.error('QR Code generation error:', error);
-                generateQRCodeWithImage(appUrl);
-            }
-        }
-        
-        // Alternatieve QR code met image API
-        function generateQRCodeWithImage(url) {
-            const qrCodeElement = document.getElementById('qrCode');
-            qrCodeElement.innerHTML = `
-                <div style="text-align: center;">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}" 
-                         alt="QR Code" 
-                         style="border-radius: 10px; max-width: 100%;"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display: none; padding: 20px; background: white; border-radius: 10px; color: #333;">
-                        <div style="font-size: 2rem; margin-bottom: 10px;">📱</div>
-                        <strong>Scan deze link:</strong><br>
-                        <small style="word-break: break-all; font-size: 0.8rem;">${url}</small>
-                    </div>
-                </div>
-            `;
-        }
-
-        // File input handler
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const files = Array.from(e.target.files);
-            selectedFiles = [...selectedFiles, ...files];
-            updateFilePreview();
-            updateUploadButton();
-        });
-
-        function updateFilePreview() {
-            const preview = document.getElementById('filePreview');
-            preview.innerHTML = '';
-            
-            selectedFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewItem = document.createElement('div');
-                    previewItem.className = 'preview-item';
-                    previewItem.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview" class="preview-img">
-                        <button class="remove-btn" onclick="removeFile(${index})">×</button>
-                    `;
-                    preview.appendChild(previewItem);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            updateFilePreview();
-            updateUploadButton();
-        }
-
-        function updateUploadButton() {
-            const uploadBtn = document.getElementById('uploadBtn');
-            uploadBtn.disabled = selectedFiles.length === 0;
-            uploadBtn.textContent = selectedFiles.length > 0 ? 
-                `🚀 Upload ${selectedFiles.length} foto${selectedFiles.length !== 1 ? "'s" : ''}` : 
-                '🚀 Upload naar Gedeelde Drive';
-        }
-
-        // Upload functie
-        document.getElementById('uploadBtn').addEventListener('click', async function() {
-            if (selectedFiles.length === 0) return;
-            
-            this.textContent = '📤 Uploaden...';
-            this.disabled = true;
-            
-            const success = await uploadToGoogleDrive(selectedFiles);
-            
-            if (success) {
-                this.textContent = '✅ Geüpload!';
-                setTimeout(() => {
-                    this.textContent = '🚀 Upload naar Gedeelde Drive';
-                    this.disabled = false;
-                }, 2000);
-            } else {
-                this.textContent = '❌ Upload mislukt';
-                setTimeout(() => {
-                    this.textContent = '🚀 Upload naar Gedeelde Drive';
-                    this.disabled = false;
-                }, 3000);
-            }
-        });
-
-        // Initialisatie
-        window.addEventListener('load', async function() {
-            await generateQRCode();
-            loadGoogleApis();
-        });
-
         // Google Drive configuratie
         const DRIVE_FOLDER_ID = '1gubSpYKWlFfIpe2bwUqAxUtCKm8ZOLgf';
         const API_KEY = 'AIzaSyBvVyuhpOCgD7TjKS8SsvNDZf4rIftTRco';
@@ -611,7 +309,6 @@
                 discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
             });
             isGapiLoaded = true;
-            maybeEnableButtons();
         }
 
         function gisLoaded() {
@@ -620,20 +317,68 @@
                 scope: 'https://www.googleapis.com/auth/drive.file',
                 callback: (resp) => {
                     if (resp.error !== undefined) {
-                        throw (resp);
+                        showStatusMessage('❌ Login mislukt. Probeer opnieuw.', 'error');
+                        return;
                     }
                     accessToken = resp.access_token;
-                    showStatusMessage('✅ Succesvol ingelogd bij Google Drive!', 'success');
+                    showStatusMessage('✅ Ingelogd! Upload wordt gestart...', 'success');
+                    // Direct uploaden na login
+                    setTimeout(() => performUpload(), 1000);
                 },
             });
             isGisLoaded = true;
-            maybeEnableButtons();
         }
 
-        function maybeEnableButtons() {
-            if (isGapiLoaded && isGisLoaded) {
-                // APIs zijn geladen
-                console.log('Google APIs geladen');
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            selectedFiles = [...selectedFiles, ...files];
+            updateFilePreview();
+            updateUploadButton();
+        });
+
+        function updateFilePreview() {
+            const preview = document.getElementById('filePreview');
+            const photoCount = document.getElementById('photoCount');
+            
+            preview.innerHTML = '';
+            
+            if (selectedFiles.length === 0) {
+                photoCount.textContent = 'Geen foto\'s geselecteerd';
+                return;
+            }
+            
+            photoCount.textContent = `${selectedFiles.length} foto${selectedFiles.length !== 1 ? '\'s' : ''} geselecteerd`;
+            
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" class="preview-img">
+                        <button class="remove-btn" onclick="removeFile(${index})">×</button>
+                    `;
+                    preview.appendChild(previewItem);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFilePreview();
+            updateUploadButton();
+        }
+
+        function updateUploadButton() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = selectedFiles.length === 0;
+            
+            if (selectedFiles.length === 0) {
+                uploadBtn.textContent = '🚀 Upload Foto\'s';
+            } else {
+                uploadBtn.textContent = `🚀 Upload ${selectedFiles.length} foto${selectedFiles.length !== 1 ? '\'s' : ''}`;
             }
         }
 
@@ -645,6 +390,8 @@
                     return;
                 }
                 
+                showStatusMessage('🔐 Google login wordt geopend...', 'info');
+                
                 tokenClient.callback = (resp) => {
                     if (resp.error !== undefined) {
                         showStatusMessage('❌ Login mislukt: ' + resp.error, 'error');
@@ -652,7 +399,6 @@
                         return;
                     }
                     accessToken = resp.access_token;
-                    showStatusMessage('✅ Succesvol ingelogd bij Google Drive!', 'success');
                     resolve(accessToken);
                 };
                 
@@ -662,31 +408,34 @@
 
         // Upload functie naar Google Drive
         async function uploadToGoogleDrive(files) {
-            if (API_KEY === 'VERVANG_MET_JOUW_API_KEY' || CLIENT_ID === 'VERVANG_MET_JOUW_CLIENT_ID') {
-                showStatusMessage('⚠️ Google API configuratie vereist! Zie instructies hieronder.', 'error');
-                return false;
-            }
-
             try {
-                // Authenticatie
-                const token = await authenticate();
-                if (!token) return false;
-
-                showStatusMessage('📤 Uploaden gestart...', 'success');
+                showStatusMessage('📤 Uploaden gestart...', 'info');
                 
-                const uploadPromises = files.map(file => uploadSingleFile(file, token));
+                const uploadPromises = files.map((file, index) => 
+                    uploadSingleFile(file, accessToken, index + 1, files.length)
+                );
                 const results = await Promise.all(uploadPromises);
                 
                 const successCount = results.filter(result => result).length;
-                showStatusMessage(`✅ ${successCount} van ${files.length} foto's succesvol geüpload!`, 'success');
                 
-                // Reset form
-                selectedFiles = [];
-                updateFilePreview();
-                updateUploadButton();
-                document.getElementById('fileInput').value = '';
+                if (successCount === files.length) {
+                    showStatusMessage(`🎉 Alle ${successCount} foto's succesvol geüpload!`, 'success');
+                    // Reset form
+                    selectedFiles = [];
+                    updateFilePreview();
+                    updateUploadButton();
+                    document.getElementById('fileInput').value = '';
+                    
+                    // Success animatie
+                    document.querySelector('.container').classList.add('success-animation');
+                    setTimeout(() => {
+                        document.querySelector('.container').classList.remove('success-animation');
+                    }, 600);
+                } else {
+                    showStatusMessage(`⚠️ ${successCount} van ${files.length} foto's geüpload. Probeer de mislukte opnieuw.`, 'error');
+                }
                 
-                return true;
+                return successCount > 0;
             } catch (error) {
                 console.error('Upload error:', error);
                 showStatusMessage('❌ Upload mislukt: ' + error.message, 'error');
@@ -694,8 +443,10 @@
             }
         }
 
-        async function uploadSingleFile(file, token) {
+        async function uploadSingleFile(file, token, current, total) {
             return new Promise((resolve) => {
+                showStatusMessage(`📤 Uploaden... ${current}/${total}`, 'info');
+                
                 const metadata = {
                     name: file.name,
                     parents: [DRIVE_FOLDER_ID]
@@ -729,6 +480,19 @@
             });
         }
 
+        async function performUpload() {
+            if (selectedFiles.length === 0) return;
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.textContent = '📤 Uploaden...';
+            uploadBtn.disabled = true;
+            
+            const success = await uploadToGoogleDrive(selectedFiles);
+            
+            uploadBtn.disabled = false;
+            updateUploadButton();
+        }
+
         function showStatusMessage(message, type) {
             const statusMessage = document.getElementById('statusMessage');
             statusMessage.style.display = 'block';
@@ -738,9 +502,33 @@
             if (type === 'success') {
                 setTimeout(() => {
                     statusMessage.style.display = 'none';
-                }, 5000);
+                }, 6000);
+            } else if (type === 'info') {
+                // Info messages blijven zichtbaar tot vervangen
             }
         }
+
+        // Upload button click handler
+        document.getElementById('uploadBtn').addEventListener('click', async function() {
+            if (selectedFiles.length === 0) return;
+            
+            // Check of APIs geladen zijn
+            if (!isGapiLoaded || !isGisLoaded) {
+                showStatusMessage('⏳ Google services worden nog geladen. Probeer over een moment opnieuw.', 'error');
+                return;
+            }
+            
+            // Authenticatie
+            const token = await authenticate();
+            if (!token) return;
+            
+            // Als we hier komen, is authenticatie gelukt en performUpload wordt aangeroepen via callback
+        });
+
+        // Initialisatie
+        window.addEventListener('load', function() {
+            loadGoogleApis();
+        });
     </script>
 </body>
 </html>
