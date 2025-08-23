@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Foto's Delen</title>
+    <title>✨ Foto's Delen - Geoptimaliseerd</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -164,6 +164,8 @@
             margin-bottom: 10px;
             font-weight: 600;
         }
+
+
 
         .upload-section {
             background: rgba(247, 250, 252, 0.8);
@@ -334,12 +336,19 @@
             max-width: 300px;
         }
 
+        .file-size {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-bottom: 5px;
+        }
+
         .file-status {
             font-size: 0.85rem;
             font-weight: 500;
         }
 
         .file-status.ready { color: #3182ce; }
+        .file-status.compressing { color: #f59e0b; }
         .file-status.uploading { color: #ed8936; }
         .file-status.success { color: #38a169; }
         .file-status.error { color: #e53e3e; }
@@ -527,6 +536,10 @@
                 flex-direction: column;
                 gap: 15px;
             }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 480px) {
@@ -555,7 +568,7 @@
         <div class="header">
             <div class="header-emoji">📸</div>
             <h1>Foto's Delen</h1>
-            <p>Deel je mooiste momenten - simpel & snel!</p>
+            <p>Deel je mooiste momenten - automatisch geoptimaliseerd!</p>
         </div>
 
         <!-- Firebase Setup Warning -->
@@ -563,6 +576,8 @@
             <h3>🔧 Firebase Setup Vereist</h3>
             <p>Om foto uploads te laten werken, moet je eerst Firebase configureren.</p>
         </div>
+
+
 
         <div class="upload-section">
             <div class="form-group">
@@ -581,7 +596,7 @@
                 <input type="file" id="photos" multiple accept="image/*" class="file-input">
                 
                 <p style="font-size: 0.9rem; color: #a0aec0; margin-top: 15px;">
-                    Onbeperkt aantal foto's • JPG, PNG, HEIC toegestaan
+                    Onbeperkt aantal foto's • Automatisch gecomprimeerd voor snelle upload
                 </p>
             </div>
 
@@ -617,6 +632,15 @@
         let isFirebaseReady = false;
         let app, storage;
 
+        // Optimale instellingen (hardcoded voor beste snelheid)
+        const OPTIMIZATION_SETTINGS = {
+            compressionQuality: 0.7,        // 70% kwaliteit - goede balans
+            maxConcurrent: 6,               // 6 gelijktijdige uploads
+            maxDimension: 1440,             // Max 1440px - mobiel vriendelijk
+            autoCompress: true,             // Altijd comprimeren
+            chunkSize: 1024 * 1024 * 2     // 2MB chunks voor betere prestaties
+        };
+
         // Wacht tot DOM geladen is
         document.addEventListener('DOMContentLoaded', function() {
             loadFirebase();
@@ -645,7 +669,7 @@
                 
                 // Hide setup warning
                 document.getElementById('setupWarning').style.display = 'none';
-                showStatus('🔥 Firebase geladen - klaar om te uploaden!', 'success');
+                showStatus('🔥 Firebase geladen - automatisch geoptimaliseerd voor snelheid!', 'success');
                 
                 // Setup file handling
                 setupFileHandling();
@@ -719,6 +743,7 @@
                 if (!isDuplicate) {
                     const fileObj = {
                         file: file,
+                        originalSize: file.size,
                         id: Date.now() + Math.random(),
                         status: 'ready',
                         progress: 0
@@ -732,6 +757,14 @@
             updateUploadButton();
         }
 
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
         function updateFileList() {
             const fileList = document.getElementById('fileList');
             fileList.innerHTML = '';
@@ -739,19 +772,25 @@
             selectedFiles.forEach((fileObj, index) => {
                 const fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
+                
+                const sizeDisplay = fileObj.compressedSize ? 
+                    `${formatFileSize(fileObj.compressedSize)} (was ${formatFileSize(fileObj.originalSize)})` : 
+                    formatFileSize(fileObj.originalSize);
+                
                 fileItem.innerHTML = `
                     <div class="file-info">
                         <div class="file-name">📸 ${fileObj.file.name}</div>
+                        <div class="file-size">${sizeDisplay}</div>
                         <div class="file-status ${fileObj.status}">
                             ${getStatusText(fileObj.status, fileObj.progress)}
                         </div>
-                        ${fileObj.status === 'uploading' ? `
+                        ${(fileObj.status === 'uploading' || fileObj.status === 'compressing') ? `
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${fileObj.progress}%"></div>
                             </div>
                         ` : ''}
                     </div>
-                    <button type="button" class="remove-file" onclick="removeFile(${index})" ${fileObj.status === 'uploading' ? 'disabled' : ''}>×</button>
+                    <button type="button" class="remove-file" onclick="removeFile(${index})" ${(fileObj.status === 'uploading' || fileObj.status === 'compressing') ? 'disabled' : ''}>×</button>
                 `;
                 fileList.appendChild(fileItem);
             });
@@ -760,148 +799,4 @@
         function getStatusText(status, progress) {
             switch (status) {
                 case 'ready': return 'Klaar om te uploaden';
-                case 'uploading': return `Uploaden... ${progress}%`;
-                case 'success': return '✅ Geüpload!';
-                case 'error': return '❌ Upload mislukt';
-                default: return '';
-            }
-        }
-
-        function removeFile(index) {
-            if (selectedFiles[index] && selectedFiles[index].status !== 'uploading') {
-                selectedFiles.splice(index, 1);
-                updateFileList();
-                updateUploadButton();
-            }
-        }
-
-        function updateUploadButton() {
-            const readyFiles = selectedFiles.filter(f => f.status === 'ready').length;
-            const uploadBtn = document.getElementById('uploadBtn');
-            
-            uploadBtn.disabled = readyFiles === 0 || !isFirebaseReady;
-            
-            if (readyFiles === 0) {
-                uploadBtn.textContent = '🚀 Foto\'s Uploaden';
-            } else {
-                uploadBtn.textContent = `🚀 ${readyFiles} foto${readyFiles > 1 ? "'s" : ""} uploaden`;
-            }
-        }
-
-        function showStatus(message, type) {
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.style.display = 'block';
-            statusMessage.className = `status-message status-${type}`;
-            statusMessage.textContent = message;
-            
-            if (type === 'success') {
-                setTimeout(() => {
-                    statusMessage.style.display = 'none';
-                }, 5000);
-            }
-        }
-
-        async function startUpload() {
-            if (!isFirebaseReady) {
-                showStatus('❌ Firebase niet geconfigureerd', 'error');
-                return;
-            }
-
-            const readyFiles = selectedFiles.filter(f => f.status === 'ready');
-            if (readyFiles.length === 0) return;
-
-            const uploaderName = document.getElementById('uploaderName').value.trim() || 'Anoniem';
-            
-            const uploadBtn = document.getElementById('uploadBtn');
-            uploadBtn.disabled = true;
-            uploadBtn.textContent = '📤 Uploaden...';
-            
-            // Laad upload functie
-            const { ref, uploadBytesResumable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
-            
-            // Upload files concurrently (max 3 at a time)
-            const maxConcurrent = 3;
-            for (let i = 0; i < readyFiles.length; i += maxConcurrent) {
-                const batch = readyFiles.slice(i, i + maxConcurrent);
-                await Promise.all(batch.map(fileObj => uploadFile(fileObj, uploaderName, ref, uploadBytesResumable)));
-            }
-            
-            updateUploadButton();
-            updateStats();
-            
-            const successCount = selectedFiles.filter(f => f.status === 'success').length;
-            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
-            
-            if (errorCount === 0) {
-                showStatus(`🎉 Alle ${successCount} foto's succesvol geüpload!`, 'success');
-                
-                // Reset form after successful upload
-                setTimeout(() => {
-                    selectedFiles = selectedFiles.filter(f => f.status !== 'success');
-                    updateFileList();
-                    updateUploadButton();
-                    document.getElementById('uploaderName').value = '';
-                }, 3000);
-            } else {
-                showStatus(`⚠️ ${successCount} gelukt, ${errorCount} mislukt. Probeer mislukte opnieuw.`, 'error');
-            }
-        }
-
-        async function uploadFile(fileObj, uploaderName, ref, uploadBytesResumable) {
-            try {
-                fileObj.status = 'uploading';
-                fileObj.progress = 0;
-                updateFileList();
-
-                // Create storage reference
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                const fileName = `${timestamp}_${uploaderName}_${fileObj.file.name}`;
-                const storageRef = ref(storage, `uploads/${fileName}`);
-
-                // Upload with progress tracking
-                const uploadTask = uploadBytesResumable(storageRef, fileObj.file);
-                
-                return new Promise((resolve, reject) => {
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            fileObj.progress = Math.round(progress);
-                            updateFileList();
-                        },
-                        (error) => {
-                            console.error('Upload error:', error);
-                            fileObj.status = 'error';
-                            updateFileList();
-                            reject(error);
-                        },
-                        () => {
-                            fileObj.status = 'success';
-                            fileObj.progress = 100;
-                            updateFileList();
-                            console.log('Upload successful:', fileName);
-                            resolve();
-                        }
-                    );
-                });
-            } catch (error) {
-                console.error('Upload setup error:', error);
-                fileObj.status = 'error';
-                updateFileList();
-            }
-        }
-
-        function updateStats() {
-            const successCount = selectedFiles.filter(f => f.status === 'success').length;
-            const errorCount = selectedFiles.filter(f => f.status === 'error').length;
-            const totalCount = selectedFiles.length;
-
-            document.getElementById('successCount').textContent = `✅ ${successCount} gelukt`;
-            document.getElementById('errorCount').textContent = `❌ ${errorCount} mislukt`;
-            document.getElementById('totalCount').textContent = `📊 ${totalCount} totaal`;
-            
-            const uploadStats = document.getElementById('uploadStats');
-            uploadStats.style.display = totalCount > 0 ? 'flex' : 'none';
-        }
-    </script>
-</body>
-</html>
+                case 'compressing': return `Comprimeren... ${progress}
