@@ -436,6 +436,7 @@
 
         function handleFiles(e) {
             const files = Array.from(e.target.files);
+            console.log('handleFiles called with', files.length, 'files'); // Tijdelijke debug
             
             if (files.length === 0) {
                 return;
@@ -496,6 +497,8 @@
                 `;
                 fileList.appendChild(fileItem);
             });
+            
+            console.log('File list updated:', selectedFiles.length, 'files'); // Tijdelijke debug
         }
 
         function getStatusText(status, progress) {
