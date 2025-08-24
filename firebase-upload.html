@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ Wedding Photo Gallery</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap');
         
         * {
             margin: 0;
@@ -70,24 +70,54 @@
 
         .corner-flourish {
             position: absolute;
-            width: 120px;
-            height: 120px;
-            opacity: 0.1;
-            background: linear-gradient(45deg, #d4af37, #ffd700);
-            border-radius: 50% 0;
+            width: 180px;
+            height: 180px;
+            opacity: 0.12;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><g stroke="%23d4af37" stroke-width="1.2" fill="none"><path d="M30 90 Q30 60, 50 50 Q70 30, 90 30 Q120 30, 140 50 Q150 70, 140 90 Q150 110, 140 130 Q120 150, 90 150 Q70 150, 50 130 Q30 110, 30 90"/><path d="M90 30 Q110 40, 120 60 Q130 80, 120 90 Q130 100, 120 120 Q110 140, 90 150"/><path d="M90 30 Q70 40, 60 60 Q50 80, 60 90 Q50 100, 60 120 Q70 140, 90 150"/><path d="M50 50 Q60 55, 70 50 Q80 45, 90 50 Q100 45, 110 50 Q120 55, 130 50"/><path d="M50 130 Q60 125, 70 130 Q80 135, 90 130 Q100 135, 110 130 Q120 125, 130 130"/><path d="M60 70 Q70 65, 80 70 Q90 75, 100 70 Q110 65, 120 70"/><path d="M60 110 Q70 115, 80 110 Q90 105, 100 110 Q110 115, 120 110"/><path d="M70 90 Q80 85, 90 90 Q100 95, 110 90"/><circle cx="90" cy="90" r="8" stroke="%23ffd700" stroke-width="0.8"/><path d="M45 45 Q90 20, 135 45"/><path d="M45 135 Q90 160, 135 135"/><path d="M45 45 Q20 90, 45 135"/><path d="M135 45 Q160 90, 135 135"/></g></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        .corner-flourish {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            opacity: 0.3;
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 0;
         }
 
         .corner-flourish.top-left {
-            top: 0;
-            left: 0;
-            animation: elegantFloat 8s ease-in-out infinite;
+            top: -20px;
+            left: -20px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xMCA1MCBRMCA0MCAxMCAzMCBRMjAgMjAgMzAgMzAgUTQwIDQwIDMwIDUwIFEyMCA2MCAzMCA3MCBRNDAGOCA0MCA5MCBRNTAGINEIA0MCA5MCBRODAGODAINEA3MCBRNTAGINEIA2MCBRNTAGINAG1MCBROTAINjAgOTAgODAiIHN0cm9rZT0iI2Q0YWYzNyIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTMwIDMwIFE1MCAyMCA3MCAzMCBROTAgNDAgNzAgNTAgUTUwIDYwIDcwIDcwIFE5MCA4MCA3MCA5MCBRNTAGINEA3MCBRODAGODE1MCBRODAIUTMwIDEwMCAzMCA4MCBRMzAgNjAgMzAgNDAiIHN0cm9rZT0iI2ZmZDcwMCIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik01MCA3MCBRODA4MCA5MCA3MCBRODA2MCA5MCA1MCBRODA0MCA5MCAzMCBRNzAgMjAgNTAgMzAgUTMwIDQwIDUwIDUwIFE3MCA2MCA1MCA3MCIgc3Ryb2tlPSIjZDRhZjM3IiBzdHJva2Utd2lkdGg9IjEuMiIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4K');
+            animation: elegantFloat 10s ease-in-out infinite;
+        }
+
+        .corner-flourish.top-right {
+            top: -20px;
+            right: -20px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xNTAgMTAgUTE2MCAyMCAxNTAgMzAgUTE0MCA0MCAxNTAgNTAgUTE2MCA2MCAxNTAgNzAgUTE0MCA4MCAxNTAgOTAgUTE2MCAxMDAgMTUwIDExMCBRMTQwIDEyMCAxNTAgMTMwIFExNjAgMTQwIDE1MCAxNTAgUTE0MCAxNjAgMTMwIDE1MCBRMTIWODA5MCAzMCBRMTAwIDEwIDExMCAzMCBRMTIwIDQwIDExMCA1MCBRMTAGINEIA5MCA3MCBRODA4MCA5MCA5MCBRODA4MCA5MCA3MCBRMTAGODEIA2MCBRNTAGINAG1MCBRNzAgMjAgODAgMzAgUTkwIDQwIDgwIDUwIFE3MCA2MCA4MCA3MCBROTE4MCA4MCA5MCBRODA2MCA4MCA1MCBRNTE0MCA3MCAzMCBRNjAgMjAgNzAgMzAiIHN0cm9rZT0iI2Q0YWYzNyIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTE3MCAzMCBRMTUwIDQwIDEzMCAzMCBRMTEwIDIwIDEzMCAxMCBRMTUwIDAgMTcwIDEwIFExOTAgMjAgMTcwIDMwIiBzdHJva2U9IiNmZmQ3MDAiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4K');
+            transform: scaleX(-1);
+            animation: elegantFloat 10s ease-in-out infinite reverse;
+        }
+
+        .corner-flourish.bottom-left {
+            bottom: -20px;
+            left: -20px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xMCAxNTAgUTIwIDE2MCAzMCAxNTAgUTQwIDE0MCAzMCAxMzAgUTIwIDEyMCAzMCAxMTAgUTQwIDEwMCAzMCA5MCBRNTAGINEIA4MCA5MCBRNTAGINEIA3MCBRNTE0MCA3MCAzMCBROTAINjAgODAgNTAgUTcwIDQwIDYwIDUwIFE1MCA2MCA2MCA3MCBRNTE4MCA2MCA5MCBRNTE0MCA2MCA3MCBRNTAGINAG1MCBRNzAgMTIwIDgwIDEzMCBROTAgMTQwIDgwIDE1MCBRNTE0MCA4MCAxNTAiIHN0cm9rZT0iI2Q0YWYzNyIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTMwIDE3MCBRNTAGINEA3MCBROE0INEA4MCBRUE1MCAxNzAgUTMwIDE4MCAzMCAxNzAiIHN0cm9rZT0iI2ZmZDcwMCIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIi8+CjwvbSzZz4K');
+            transform: scaleY(-1);
+            animation: elegantFloat 10s ease-in-out infinite;
         }
 
         .corner-flourish.bottom-right {
-            bottom: 0;
-            right: 0;
-            transform: rotate(180deg);
-            animation: elegantFloat 8s ease-in-out infinite reverse;
+            bottom: -20px;
+            right: -20px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xNTAgMTUwIFExNjAgMTQwIDE1MCAxMzAgUTE0MCAxMjAgMTUwIDExMCBRMTYwIDEwMCAxNTAgOTAgUTE0MCA4MCAxNTAgNzAgUTE2MCA2MCAxNTAgNTAgUTE0MCA0MCAxNTAgMzAgUTE2MCAyMCAxNTAgMTAgUTE0MCA1IDEzMCAxMCBRMTIwIDIwIDEzMCAzMCBRMTIwIDQwIDEzMCA1MCBROTE0MCA2MCAzMCBRMTE0MCA5MCA3MCBRMTEWODA4MCBRMTAwIDEwMCAxMTAgMTEwIFExMjAgMTIwIDExMCAxMzAgUTEwMCAxNDAgMTEwIDE1MCBRNTE0MCAxNjAgMTMwIDE1MCBRMTQwIDEYMCAxNTAgMTUwIiBzdHJva2U9IiNkNGFmMzciIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik0xNzAgMTcwIFExNTAgMTYwIDEzMCAxNzAgUTExMCAxODAgMTMwIDE5MCBRNTE0MCAyMDAgMTcwIDE5MCBRGTE0MDA4IDE3MCIgc3Ryb2tlPSIjZmZkNzAwIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiLz4KPC9z2c+Cg==');
+            transform: scale(-1, -1);
+            animation: elegantFloat 10s ease-in-out infinite reverse;
         }
 
         .wedding-card {
@@ -114,9 +144,24 @@
             right: 0;
             height: 3px;
             background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
-            background-size: 200% 100%;
-            animation: shimmer 3s ease-in-out infinite;
         }
+
+        .couple-names {
+            font-family: 'Great Vibes', 'Dancing Script', cursive;
+            font-size: 4.5rem;
+            font-weight: 400;
+            background: linear-gradient(135deg, #d4af37, #ffd700, #b8860b, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            position: relative;
+            filter: drop-shadow(0 3px 6px rgba(212, 175, 55, 0.3));
+        }
+
+
 
         .card-header {
             text-align: center;
@@ -546,7 +591,12 @@
             animation: elegantFloat 0.8s ease-in-out;
         }
 
-        @media (max-width: 768px) {
+            @media (max-width: 768px) {
+            .couple-names {
+                font-size: 3.2rem;
+                letter-spacing: 1px;
+            }
+            
             body {
                 padding: 15px;
             }
@@ -584,6 +634,11 @@
         }
 
         @media (max-width: 480px) {
+            .couple-names {
+                font-size: 2.5rem;
+                letter-spacing: 0.5px;
+            }
+            
             .card-title {
                 font-size: 1.8rem;
             }
@@ -601,13 +656,16 @@
 <body>
     <div class="decorative-elements">
         <div class="corner-flourish top-left"></div>
+        <div class="corner-flourish top-right"></div>
+        <div class="corner-flourish bottom-left"></div>
         <div class="corner-flourish bottom-right"></div>
     </div>
 
     <div class="wedding-card">
         <div class="card-header">
+            <h1 class="couple-names">Sandrine & Olivier</h1>
             <div class="wedding-rings">💍</div>
-            <h1 class="card-title">Wedding Gallery</h1>
+            <h2 class="card-title">Wedding Gallery</h2>
             <p class="card-subtitle">Share Your Beautiful Moments</p>
             <div class="divider"></div>
         </div>
