@@ -1,10 +1,4 @@
-.corner-flourish.bottom-left {
-            bottom: -10px;
-            left: -10px;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xMCAxNTAgUTIwIDE2MCAzMCAxNTAgUTQwIDE0MCAzMCAxMzAgUTIwIDEyMCAzMCAxMTAgUTQwIDEwMCAzMCA5MCBRNTAGINEIA4MCA5MCBRNTAGINEIA3MCBRNTE0MCA3MCAzMCBROTAINjAgODAgNTAgUTcwIDQwIDYwIDUwIFE1MCA2MCA2MCA3MCBRNTE4MCA2MCA5MCBRNTE0MCA2MCA3MCBRNTAGNAG1MCBRNzAgMTIwIDgwIDEzMCBROTAgMTQwIDgwIDE1MCBRNTE0MCA4MCAxNTAiIHN0cm9rZT0iI2Q0YWYzNyIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTMwIDE3MCBRNTAGINEA3MCBROE0INEA4MCBRUE1MCAxNzAgUTMwIDE4MCAzMCAxNzAiIHN0cm9rZT0iI2ZmZDcwMCIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIi8+CjwvbSzZz4K');
-            transform: scaleY(-1);
-            animation: elegantFloat 12s ease-in-out infinite;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -599,115 +593,62 @@
 
             @media (max-width: 768px) {
             .couple-names {
-                font-size: 2.8rem;
-                letter-spacing: 0.5px;
+                font-size: 3.2rem;
+                letter-spacing: 1px;
             }
             
             body {
-                padding: 10px;
+                padding: 15px;
             }
             
             .wedding-card {
-                padding: 25px 15px;
-                border-radius: 18px;
+                padding: 35px 25px;
+                border-radius: 20px;
+            }
+            
+            .card-title {
+                font-size: 2.2rem;
+            }
+
+            .wedding-rings {
+                font-size: 2.5rem;
+            }
+
+            .upload-zone {
+                padding: 45px 25px;
+            }
+
+            .upload-button {
+                font-size: 1.1rem;
+                padding: 20px 45px;
+            }
+
+            .file-name {
+                max-width: 220px;
+            }
+
+            .stats-display {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .couple-names {
+                font-size: 2.5rem;
+                letter-spacing: 0.5px;
             }
             
             .card-title {
                 font-size: 1.8rem;
             }
 
-            .wedding-rings {
-                font-size: 2rem;
-            }
-
             .upload-zone {
-                padding: 30px 15px;
-            }
-
-            .upload-button {
-                font-size: 1.1rem;
-                padding: 18px 40px;
-            }
-
-            .file-name {
-                max-width: 180px;
-            }
-
-            .stats-display {
-                flex-direction: column;
-                gap: 15px;
-                padding: 20px;
-            }
-
-            .corner-flourish {
-                width: 80px;
-                height: 80px;
-                opacity: 0.15;
-            }
-
-            .corner-flourish.top-left,
-            .corner-flourish.top-right {
-                top: -5px;
-            }
-
-            .corner-flourish.top-left,
-            .corner-flourish.bottom-left {
-                left: -5px;
-            }
-
-            .corner-flourish.top-right,
-            .corner-flourish.bottom-right {
-                right: -5px;
-            }
-
-            .corner-flourish.bottom-left,
-            .corner-flourish.bottom-right {
-                bottom: -5px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .couple-names {
-                font-size: 2.2rem;
-                letter-spacing: 0.3px;
-            }
-            
-            .card-title {
-                font-size: 1.6rem;
-            }
-
-            .upload-zone {
-                padding: 25px 15px;
-                border-radius: 15px;
+                padding: 35px 20px;
             }
 
             .file-card {
-                padding: 15px;
-            }
-
-            .upload-section {
-                padding: 20px 15px;
-                border-radius: 15px;
-            }
-
-            .elegant-input {
-                padding: 14px 18px;
-            }
-
-            .select-files-btn {
-                padding: 14px 28px;
-                font-size: 0.9rem;
-            }
-
-            .upload-button {
-                padding: 16px 32px;
-                font-size: 1rem;
-            }
-
-            .corner-flourish {
-                width: 60px;
-                height: 60px;
-                opacity: 0.1;
+                padding: 20px;
             }
         }
     </style>
