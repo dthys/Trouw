@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Foto's Delen</title>
+    <title>✨ Wedding Photo Gallery</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap');
         
         * {
             margin: 0;
@@ -14,35 +14,42 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             padding: 20px;
-            color: #2d3748;
+            color: #2c3e50;
+            position: relative;
             overflow-x: hidden;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 192, 203, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        @keyframes elegantFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
-        @keyframes slideInUp {
+        @keyframes fadeInUp {
             from {
-                transform: translateY(50px);
+                transform: translateY(30px);
                 opacity: 0;
             }
             to {
@@ -51,7 +58,7 @@
             }
         }
 
-        .background-decoration {
+        .decorative-elements {
             position: fixed;
             top: 0;
             left: 0;
@@ -61,350 +68,258 @@
             z-index: -1;
         }
 
-        .floating-shape {
+        .corner-flourish {
             position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .shape-1 {
-            width: 80px;
-            height: 80px;
-            top: 20%;
-            left: 10%;
-            animation-delay: -2s;
-        }
-
-        .shape-2 {
             width: 120px;
             height: 120px;
-            top: 60%;
-            right: 15%;
-            animation-delay: -4s;
+            opacity: 0.1;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            border-radius: 50% 0;
         }
 
-        .shape-3 {
-            width: 60px;
-            height: 60px;
-            bottom: 20%;
-            left: 20%;
-            animation-delay: -1s;
+        .corner-flourish.top-left {
+            top: 0;
+            left: 0;
+            animation: elegantFloat 8s ease-in-out infinite;
         }
 
-        .container {
-            max-width: 600px;
+        .corner-flourish.bottom-right {
+            bottom: 0;
+            right: 0;
+            transform: rotate(180deg);
+            animation: elegantFloat 8s ease-in-out infinite reverse;
+        }
+
+        .wedding-card {
+            max-width: 700px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.9) 100%);
             backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 40px;
+            border-radius: 25px;
+            padding: 50px;
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(255, 255, 255, 0.2);
-            animation: slideInUp 0.8s ease-out;
+                0 25px 50px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(255, 255, 255, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            animation: fadeInUp 1s ease-out;
             position: relative;
             overflow: hidden;
         }
 
-        .container::before {
+        .wedding-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
             background-size: 200% 100%;
-            animation: gradientShift 3s ease infinite;
+            animation: shimmer 3s ease-in-out infinite;
         }
 
-        .header {
+        .card-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             position: relative;
         }
 
-        .header-emoji {
-            font-size: 4rem;
-            margin-bottom: 20px;
+        .wedding-rings {
+            font-size: 3rem;
+            margin-bottom: 25px;
             display: inline-block;
-            animation: pulse 2s ease-in-out infinite;
+            animation: elegantFloat 4s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.3));
         }
 
-        .header h1 {
-            font-size: 2.5rem;
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
             font-weight: 700;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -0.5px;
+            line-height: 1.2;
         }
 
-        .header p {
-            font-size: 1.2rem;
-            color: #718096;
+        .card-subtitle {
+            font-size: 1.3rem;
+            color: #7f8c8d;
             font-weight: 400;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
         }
 
-        .setup-warning {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1));
-            border: 2px solid rgba(255, 193, 7, 0.3);
-            color: #b45309;
-            padding: 25px;
+        .divider {
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 0 auto;
+        }
+
+        .setup-notice {
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.08), rgba(243, 156, 18, 0.08));
+            border: 2px solid rgba(241, 196, 15, 0.2);
+            color: #b7950b;
+            padding: 30px;
             border-radius: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             text-align: center;
             backdrop-filter: blur(10px);
+            position: relative;
         }
 
-        .setup-warning h3 {
+        .setup-notice::before {
+            content: '⚙️';
+            font-size: 2rem;
+            display: block;
             margin-bottom: 10px;
+        }
+
+        .setup-notice h3 {
+            margin-bottom: 12px;
             font-weight: 600;
+            font-size: 1.1rem;
         }
 
         .upload-section {
-            background: rgba(247, 250, 252, 0.8);
+            background: linear-gradient(135deg, rgba(248, 249, 250, 0.6), rgba(233, 236, 239, 0.4));
             border-radius: 25px;
-            padding: 35px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 40px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(233, 236, 239, 0.6);
             backdrop-filter: blur(10px);
+            position: relative;
         }
 
         .form-group {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-weight: 600;
-            color: #2d3748;
+            color: #2c3e50;
             font-size: 1rem;
+            letter-spacing: 0.3px;
         }
 
-        .form-group input[type="text"] {
+        .elegant-input {
             width: 100%;
-            padding: 16px 20px;
-            border: 2px solid #e2e8f0;
+            padding: 18px 25px;
+            border: 2px solid rgba(233, 236, 239, 0.8);
             border-radius: 15px;
-            background: white;
-            color: #2d3748;
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
             font-size: 1rem;
             font-weight: 400;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
+            font-family: inherit;
         }
 
-        .form-group input[type="text"]:focus {
-            border-color: #667eea;
+        .elegant-input:focus {
+            border-color: #d4af37;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.15);
+            background: white;
         }
 
-        .form-group input::placeholder {
-            color: #a0aec0;
+        .elegant-input::placeholder {
+            color: #bdc3c7;
+            font-style: italic;
         }
 
-        .upload-area {
-            border: 3px dashed #cbd5e0;
-            border-radius: 20px;
-            padding: 50px 30px;
+        .upload-zone {
+            border: 3px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 25px;
+            padding: 60px 40px;
             text-align: center;
-            margin: 25px 0;
-            transition: all 0.4s ease;
+            margin: 30px 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(247, 250, 252, 0.9));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(248, 249, 250, 0.8));
             position: relative;
             overflow: hidden;
         }
 
-        .upload-area::before {
+        .upload-zone::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
             transform: scale(0);
-            transition: transform 0.6s ease;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .upload-area:hover {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        .upload-zone:hover {
+            border-color: #d4af37;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(255, 215, 0, 0.05));
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
         }
 
-        .upload-area:hover::before {
+        .upload-zone:hover::before {
             transform: scale(1);
         }
 
-        .upload-area.dragover {
-            border-color: #f093fb;
-            background: linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(245, 87, 108, 0.1));
+        .upload-zone.dragover {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(212, 175, 55, 0.1));
             transform: scale(1.02);
         }
 
         .upload-icon {
             font-size: 4rem;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: inline-block;
-            animation: float 3s ease-in-out infinite;
+            animation: elegantFloat 4s ease-in-out infinite;
         }
 
-        .upload-area h3 {
-            font-size: 1.5rem;
+        .upload-zone h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
             font-weight: 600;
-            margin-bottom: 10px;
-            color: #2d3748;
+            margin-bottom: 12px;
+            color: #2c3e50;
         }
 
-        .upload-area p {
-            color: #718096;
-            margin-bottom: 20px;
+        .upload-zone p {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
         }
 
         .file-input {
             display: none;
         }
 
-        .file-input-label {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .select-files-btn {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
             border: none;
-            padding: 18px 35px;
+            padding: 20px 40px;
             border-radius: 50px;
             color: white;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-block;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .file-input-label:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #5a67d8, #6b46c1);
-        }
-
-        .file-list {
-            margin-top: 25px;
-        }
-
-        .file-item {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f1f5f9;
-            transition: all 0.3s ease;
-            animation: slideInUp 0.5s ease-out;
-        }
-
-        .file-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .file-info {
-            flex: 1;
-            margin-right: 15px;
-        }
-
-        .file-name {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #2d3748;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 300px;
-        }
-
-        .file-status {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .file-status.ready { color: #3182ce; }
-        .file-status.uploading { color: #ed8936; }
-        .file-status.success { color: #38a169; }
-        .file-status.error { color: #e53e3e; }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #f1f5f9;
-            border-radius: 3px;
-            margin-top: 8px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #38a169, #48bb78);
-            width: 0%;
-            transition: width 0.3s ease;
-            border-radius: 3px;
-        }
-
-        .remove-file {
-            background: linear-gradient(135deg, #fed7d7, #feb2b2);
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            color: #e53e3e;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .remove-file:hover:not(:disabled) {
-            background: linear-gradient(135deg, #feb2b2, #fc8181);
-            transform: scale(1.1);
-        }
-
-        .remove-file:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .upload-btn {
-            background: linear-gradient(135deg, #38a169, #48bb78);
-            border: none;
-            padding: 20px 50px;
-            border-radius: 50px;
-            color: white;
-            font-size: 1.3rem;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.4s ease;
-            margin-top: 25px;
-            box-shadow: 0 10px 30px rgba(56, 161, 105, 0.3);
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+            font-family: inherit;
             position: relative;
             overflow: hidden;
         }
 
-        .upload-btn::before {
+        .select-files-btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -415,81 +330,220 @@
             transition: left 0.5s;
         }
 
-        .upload-btn:hover:not(:disabled)::before {
+        .select-files-btn:hover::before {
             left: 100%;
         }
 
-        .upload-btn:hover:not(:disabled) {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(56, 161, 105, 0.4);
-            background: linear-gradient(135deg, #2f855a, #38a169);
+        .select-files-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, #b8941f, #e6c200);
         }
 
-        .upload-btn:disabled {
+        .file-grid {
+            margin-top: 30px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .file-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 18px;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(233, 236, 239, 0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .file-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .file-details {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .file-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 320px;
+        }
+
+        .file-status {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .file-status.ready { color: #3498db; }
+        .file-status.uploading { color: #f39c12; }
+        .file-status.success { color: #27ae60; }
+        .file-status.error { color: #e74c3c; }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(233, 236, 239, 0.8);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-indicator {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .remove-btn {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.1));
+            border: 2px solid rgba(231, 76, 60, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: #e74c3c;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(192, 57, 43, 0.2));
+            border-color: rgba(231, 76, 60, 0.4);
+            transform: scale(1.1);
+        }
+
+        .remove-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .upload-button {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: none;
+            padding: 25px 60px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 30px;
+            box-shadow: 0 12px 35px rgba(39, 174, 96, 0.3);
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+        }
+
+        .upload-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .upload-button:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .upload-button:hover:not(:disabled) {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px rgba(39, 174, 96, 0.4);
+            background: linear-gradient(135deg, #229954, #27ae60);
+        }
+
+        .upload-button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.2);
         }
 
-        .status-message {
+        .status-card {
             text-align: center;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
+            padding: 25px;
+            border-radius: 18px;
+            margin-top: 25px;
             font-weight: 600;
             backdrop-filter: blur(10px);
             border: 2px solid;
         }
 
         .status-success {
-            background: linear-gradient(135deg, rgba(56, 161, 105, 0.1), rgba(72, 187, 120, 0.1));
-            border-color: rgba(56, 161, 105, 0.3);
-            color: #2f855a;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.1));
+            border-color: rgba(39, 174, 96, 0.3);
+            color: #1e8449;
         }
 
         .status-error {
-            background: linear-gradient(135deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
-            border-color: rgba(229, 62, 62, 0.3);
-            color: #c53030;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.1));
+            border-color: rgba(231, 76, 60, 0.3);
+            color: #c0392b;
         }
 
         .status-info {
-            background: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.1));
-            border-color: rgba(49, 130, 206, 0.3);
-            color: #2c5282;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.1));
+            border-color: rgba(52, 152, 219, 0.3);
+            color: #2874a6;
         }
 
-        .upload-stats {
+        .stats-display {
             display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(247, 250, 252, 0.8);
-            border-radius: 15px;
+            justify-content: space-around;
+            margin-top: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(248, 249, 250, 0.6), rgba(233, 236, 239, 0.4));
+            border-radius: 18px;
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(233, 236, 239, 0.6);
         }
 
-        .stat-item {
+        .stats-item {
             text-align: center;
             flex: 1;
         }
 
-        .stat-number {
-            font-size: 1.5rem;
+        .stats-number {
+            font-size: 1.6rem;
             font-weight: 700;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
         }
 
-        .stat-label {
-            font-size: 0.85rem;
-            color: #718096;
+        .stats-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .success-animation {
-            animation: pulse 0.6s ease-in-out;
+        .success-effect {
+            animation: elegantFloat 0.8s ease-in-out;
         }
 
         @media (max-width: 768px) {
@@ -497,117 +551,117 @@
                 padding: 15px;
             }
             
-            .container {
-                padding: 30px 20px;
-                border-radius: 25px;
+            .wedding-card {
+                padding: 35px 25px;
+                border-radius: 20px;
             }
             
-            .header h1 {
-                font-size: 2rem;
+            .card-title {
+                font-size: 2.2rem;
             }
 
-            .header-emoji {
-                font-size: 3rem;
+            .wedding-rings {
+                font-size: 2.5rem;
             }
 
-            .upload-area {
-                padding: 40px 20px;
+            .upload-zone {
+                padding: 45px 25px;
             }
 
-            .upload-btn {
+            .upload-button {
                 font-size: 1.1rem;
-                padding: 18px 40px;
+                padding: 20px 45px;
             }
 
             .file-name {
-                max-width: 200px;
+                max-width: 220px;
             }
 
-            .upload-stats {
+            .stats-display {
                 flex-direction: column;
-                gap: 15px;
+                gap: 20px;
             }
         }
 
         @media (max-width: 480px) {
-            .header h1 {
+            .card-title {
                 font-size: 1.8rem;
             }
 
-            .upload-area {
-                padding: 30px 15px;
+            .upload-zone {
+                padding: 35px 20px;
             }
 
-            .file-item {
-                padding: 15px;
+            .file-card {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="background-decoration">
-        <div class="floating-shape shape-1"></div>
-        <div class="floating-shape shape-2"></div>
-        <div class="floating-shape shape-3"></div>
+    <div class="decorative-elements">
+        <div class="corner-flourish top-left"></div>
+        <div class="corner-flourish bottom-right"></div>
     </div>
 
-    <div class="container">
-        <div class="header">
-            <div class="header-emoji">📸</div>
-            <h1>Foto's Delen</h1>
-            <p>Deel je mooiste momenten - simpel & snel!</p>
+    <div class="wedding-card">
+        <div class="card-header">
+            <div class="wedding-rings">💍</div>
+            <h1 class="card-title">Wedding Gallery</h1>
+            <p class="card-subtitle">Share Your Beautiful Moments</p>
+            <div class="divider"></div>
         </div>
 
-        <!-- Firebase Setup Warning -->
-        <div class="setup-warning" id="setupWarning">
-            <h3>🔧 Firebase Setup Vereist</h3>
-            <p>Om foto uploads te laten werken, moet je eerst Firebase configureren.</p>
+        <!-- Firebase Setup Notice -->
+        <div class="setup-notice" id="setupWarning">
+            <h3>Firebase Configuration Required</h3>
+            <p>To enable photo uploads, Firebase must be configured first.</p>
         </div>
 
         <div class="upload-section">
             <div class="form-group">
-                <label for="uploaderName">✨ Je naam (optioneel)</label>
-                <input type="text" id="uploaderName" placeholder="Bijv. Jan & Marie">
+                <label for="uploaderName" class="form-label">👤 Your Name (Optional)</label>
+                <input type="text" id="uploaderName" class="elegant-input" placeholder="e.g. Sarah & Michael">
             </div>
 
-            <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">🎯</div>
-                <h3>Sleep foto's hiernaartoe</h3>
-                <p>of klik om bestanden te selecteren</p>
+            <div class="upload-zone" id="uploadArea">
+                <div class="upload-icon">📷</div>
+                <h3>Drag Photos Here</h3>
+                <p>or click to select files</p>
                 
-                <label for="photos" class="file-input-label">
-                    📷 Foto's Kiezen
+                <label for="photos" class="select-files-btn">
+                    Choose Photos
                 </label>
                 <input type="file" id="photos" multiple accept="image/*" class="file-input">
                 
-                <p style="font-size: 0.9rem; color: #a0aec0; margin-top: 15px;">
-                    Onbeperkt aantal foto's • JPG, PNG, HEIC toegestaan
+                <p style="font-size: 0.95rem; color: #bdc3c7; margin-top: 18px; font-style: italic;">
+                    Unlimited photos • JPG, PNG, HEIC supported
                 </p>
             </div>
 
-            <div class="file-list" id="fileList"></div>
+            <div class="file-grid" id="fileList"></div>
 
-            <button type="button" class="upload-btn" id="uploadBtn" disabled>
-                🚀 Foto's Uploaden
+            <button type="button" class="upload-button" id="uploadBtn" disabled>
+                🚀 Upload Photos
             </button>
 
-            <div class="upload-stats" id="uploadStats" style="display: none;">
-                <div class="stat-item">
-                    <span class="stat-number" id="successCount" style="color: #38a169;">0</span>
-                    <span class="stat-label">Gelukt</span>
+            <div class="stats-display" id="uploadStats" style="display: none;">
+                <div class="stats-item">
+                    <span class="stats-number" id="successCount" style="color: #27ae60;">0</span>
+                    <span class="stats-label">Successful</span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="errorCount" style="color: #e53e3e;">0</span>
-                    <span class="stat-label">Mislukt</span>
+                <div class="stats-item">
+                    <span class="stats-number" id="errorCount" style="color: #e74c3c;">0</span>
+                    <span class="stats-label">Failed</span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="totalCount" style="color: #3182ce;">0</span>
-                    <span class="stat-label">Totaal</span>
+                <div class="stats-item">
+                    <span class="stats-number" id="totalCount" style="color: #3498db;">0</span>
+                    <span class="stats-label">Total</span>
                 </div>
             </div>
 
-            <div class="status-message status-info" id="statusMessage" style="display: none;">
-                Klaar om te uploaden!
+            <div class="status-card status-info" id="statusMessage" style="display: none;">
+                Ready to upload!
             </div>
         </div>
     </div>
