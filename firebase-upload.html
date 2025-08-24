@@ -99,7 +99,7 @@
         .corner-flourish.top-right {
             top: -20px;
             right: -20px;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xNTAgMTAgUTE2MCAyMCAxNTAgMzAgUTE0MCA0MCAxNTAgNTAgUTE2MCA2MCAxNTAgNzAgUTE0MCA4MCAxNTAgOTAgUTE2MCAxMDAgMTUwIDExMCBRMTQwIDEyMCAxNTAgMTMwIFExNjAgMTQwIDE1MCAxNTAgUTE0MCAxNjAgMTMwIDE1MCBRMTIWODA5MCAzMCBRMTAwIDEwIDExMCAzMCBRMTIwIDQwIDExMCA1MCBRMTAGINEIA5MCA3MCBRODA4MCA5MCA5MCBRODA4MCA5MCA3MCBRMTAGODEIA2MCBRNTAGINAG1MCBRNzAgMjAgODAgMzAgUTkwIDQwIDgwIDUwIFE3MCA2MCA4MCA3MCBROTE4MCA4MCA5MCBRODA2MCA4MCA1MCBRNTE0MCA3MCAzMCBRNjAgMjAgNzAgMzAiIHN0cm9rZT0iI2Q0YWYzNyIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTE3MCAzMCBRMTUwIDQwIDEzMCAzMCBRMTEwIDIwIDEzMCAxMCBRMTUwIDAgMTcwIDEwIFExOTAgMjAgMTcwIDMwIiBzdHJva2U9IiNmZmQ3MDAiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4K');
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xNTAgMTAgUTE2MCAyMCAxNTAgMzAgUTE0MCA0MCAxNTAgNTAgUTE2MCA2MCAxNTAgNzAgUTE0MCA4MCAxNTAgOTAgUTE2MCAxMDAgMTUwIDExMCBRMTQwIDEyMCAxNTAgMTMwIFExNjAgMTQwIDE1MCAxNTAgUTE0MCAxNjAgMTMwIDE1MCBRMTIWODA5MCAzMCBRMTAwIDEwIDExMCAzMCBRMTIwIDQwIDExMCA1MCBRMTAGINEIA5MCA3MCBRODE4MCA5MCA5MCBRODE4MCA5MCA3MCBRMTAGODEIA2MCBRNTAGINAG1MCBRNzAgMjAgODAgMzAgUTkwIDQwIDgwIDUwIFE3MCA2MCA4MCA3MCBROTE4MCA4MCA5MCBRODE2MCA4MCA1MCBRNTE0MCA3MCAzMCBRNjAgMjAgNzAgMzAiIHN0cm9rZT0iI2Q0YWYzNyIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTE3MCAzMCBRMTUwIDQwIDEzMCAzMCBRMTEwIDIwIDEzMCAxMCBRMTUwIDAgMTcwIDEwIFExOTAgMjAgMTcwIDMwIiBzdHJva2U9IiNmZmQ3MDAiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4K');
             transform: scaleX(-1);
             animation: elegantFloat 10s ease-in-out infinite reverse;
         }
@@ -160,8 +160,6 @@
             position: relative;
             filter: drop-shadow(0 3px 6px rgba(212, 175, 55, 0.3));
         }
-
-
 
         .card-header {
             text-align: center;
@@ -591,64 +589,350 @@
             animation: elegantFloat 0.8s ease-in-out;
         }
 
-            @media (max-width: 768px) {
-            .couple-names {
-                font-size: 3.2rem;
-                letter-spacing: 1px;
-            }
-            
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
             body {
-                padding: 15px;
+                padding: 10px;
             }
             
             .wedding-card {
-                padding: 35px 25px;
-                border-radius: 20px;
+                padding: 20px 15px;
+                border-radius: 15px;
+            }
+            
+            .couple-names {
+                font-size: 2.2rem;
+                letter-spacing: 0.5px;
+                margin-bottom: 15px;
             }
             
             .card-title {
-                font-size: 2.2rem;
+                font-size: 1.6rem;
+                margin-bottom: 8px;
+            }
+
+            .card-subtitle {
+                font-size: 1rem;
+                margin-bottom: 12px;
             }
 
             .wedding-rings {
-                font-size: 2.5rem;
+                font-size: 2rem;
+                margin-bottom: 15px;
+            }
+
+            .card-header {
+                margin-bottom: 20px;
+            }
+
+            .setup-notice {
+                padding: 20px 15px;
+                margin-bottom: 25px;
+            }
+
+            .setup-notice::before {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+
+            .setup-notice h3 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+
+            .upload-section {
+                padding: 20px 15px;
+                margin-bottom: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .elegant-input {
+                padding: 14px 18px;
+                font-size: 0.95rem;
             }
 
             .upload-zone {
-                padding: 45px 25px;
+                padding: 25px 15px;
+                margin: 15px 0;
+            }
+
+            .upload-icon {
+                font-size: 2.2rem;
+                margin-bottom: 15px;
+            }
+
+            .upload-zone h3 {
+                font-size: 1.2rem;
+                margin-bottom: 8px;
+            }
+
+            .upload-zone p {
+                font-size: 0.9rem;
+                margin-bottom: 15px;
+            }
+
+            .select-files-btn {
+                padding: 12px 24px;
+                font-size: 0.9rem;
+                margin-bottom: 15px;
             }
 
             .upload-button {
-                font-size: 1.1rem;
-                padding: 20px 45px;
+                font-size: 1rem;
+                padding: 18px 40px;
+                margin-top: 20px;
+            }
+
+            .file-card {
+                padding: 18px 15px;
             }
 
             .file-name {
-                max-width: 220px;
+                max-width: 180px;
+                font-size: 0.9rem;
+            }
+
+            .file-details {
+                margin-right: 15px;
+            }
+
+            .remove-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1rem;
             }
 
             .stats-display {
                 flex-direction: column;
-                gap: 20px;
+                gap: 15px;
+                padding: 20px 15px;
+                margin-top: 20px;
+            }
+
+            .stats-number {
+                font-size: 1.4rem;
+            }
+
+            .stats-label {
+                font-size: 0.8rem;
+            }
+
+            .status-card {
+                padding: 18px 15px;
+                margin-top: 20px;
+            }
+
+            .corner-flourish {
+                width: 120px;
+                height: 120px;
+                opacity: 0.08;
+            }
+
+            .divider {
+                width: 80px;
             }
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            
+            .wedding-card {
+                padding: 15px 12px;
+                border-radius: 12px;
+            }
+            
             .couple-names {
-                font-size: 2.5rem;
-                letter-spacing: 0.5px;
+                font-size: 1.8rem;
+                letter-spacing: 0.3px;
+                margin-bottom: 12px;
             }
             
             .card-title {
+                font-size: 1.4rem;
+                margin-bottom: 6px;
+            }
+
+            .card-subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 10px;
+            }
+
+            .wedding-rings {
                 font-size: 1.8rem;
+                margin-bottom: 12px;
+            }
+
+            .card-header {
+                margin-bottom: 15px;
+            }
+
+            .setup-notice {
+                padding: 15px 12px;
+                margin-bottom: 20px;
+                border-radius: 15px;
+            }
+
+            .setup-notice::before {
+                font-size: 1.3rem;
+                margin-bottom: 6px;
+            }
+
+            .setup-notice h3 {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+
+            .upload-section {
+                padding: 15px 12px;
+                margin-bottom: 12px;
+                border-radius: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-label {
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+            }
+
+            .elegant-input {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+                border-radius: 12px;
             }
 
             .upload-zone {
-                padding: 35px 20px;
+                padding: 20px 12px;
+                margin: 12px 0;
+                border-radius: 15px;
+            }
+
+            .upload-icon {
+                font-size: 2rem;
+                margin-bottom: 12px;
+            }
+
+            .upload-zone h3 {
+                font-size: 1.1rem;
+                margin-bottom: 6px;
+            }
+
+            .upload-zone p {
+                font-size: 0.85rem;
+                margin-bottom: 12px;
+            }
+
+            .select-files-btn {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+                margin-bottom: 12px;
+            }
+
+            .upload-button {
+                font-size: 0.9rem;
+                padding: 15px 30px;
+                margin-top: 15px;
+                border-radius: 25px;
             }
 
             .file-card {
-                padding: 20px;
+                padding: 15px 12px;
+                border-radius: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .file-details {
+                margin-right: 0;
+                width: 100%;
+            }
+
+            .file-name {
+                max-width: 100%;
+                font-size: 0.85rem;
+                margin-bottom: 6px;
+            }
+
+            .file-status {
+                font-size: 0.8rem;
+            }
+
+            .remove-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+                align-self: flex-end;
+            }
+
+            .stats-display {
+                gap: 12px;
+                padding: 15px 12px;
+                margin-top: 15px;
+                border-radius: 15px;
+            }
+
+            .stats-number {
+                font-size: 1.2rem;
+                margin-bottom: 6px;
+            }
+
+            .stats-label {
+                font-size: 0.75rem;
+            }
+
+            .status-card {
+                padding: 15px 12px;
+                margin-top: 15px;
+                border-radius: 15px;
+                font-size: 0.9rem;
+            }
+
+            .corner-flourish {
+                width: 80px;
+                height: 80px;
+                opacity: 0.06;
+            }
+
+            .divider {
+                width: 60px;
+                height: 1.5px;
+            }
+
+            .progress-track {
+                height: 6px;
+                margin-top: 8px;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 320px) {
+            .couple-names {
+                font-size: 1.6rem;
+            }
+            
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .upload-zone {
+                padding: 15px 10px;
+            }
+
+            .file-card {
+                padding: 12px 10px;
+            }
+
+            .upload-button {
+                padding: 12px 24px;
+                font-size: 0.85rem;
             }
         }
     </style>
